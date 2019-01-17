@@ -3,9 +3,9 @@ package HashTable;
 import java.util.Objects;
 
 class MyListPairStringString {
-    public class Node {
-        Node next, prev;
-        String key, val;
+    protected class Node {
+        protected Node next, prev;
+        protected String key, val;
 
         Node(String key, String val) {
             this.key = key;
@@ -15,7 +15,7 @@ class MyListPairStringString {
         }
     }
 
-    Node head;
+    protected Node head;
 
     MyListPairStringString() {
         this.head = null;
@@ -33,13 +33,13 @@ class MyListPairStringString {
         return find(node.next, key);
     }
 
-    boolean contains(String key) {
+    protected boolean contains(String key) {
         Node node = find(head, key);
 
         return node != null;
     }
 
-    String get(String key) {
+    protected String get(String key) {
         Node node = find(head, key);
 
         if (node == null) {
@@ -49,7 +49,7 @@ class MyListPairStringString {
         }
     }
 
-    String put(String key, String val) {
+    protected String put(String key, String val) {
         Node node = find(head, key);
 
         if (node == null) {
@@ -70,7 +70,7 @@ class MyListPairStringString {
         }
     }
 
-    String remove(String key) {
+    protected String remove(String key) {
         Node node = find(head, key);
 
         if (node == null) {
@@ -91,7 +91,7 @@ class MyListPairStringString {
         }
     }
 
-    void clear() {
+    protected void clear() {
         head = null;
     }
 }

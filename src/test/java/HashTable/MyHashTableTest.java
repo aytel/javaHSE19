@@ -2,10 +2,8 @@ package HashTable;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.FileWriter;
-import java.io.IOException;
-
 import static org.junit.jupiter.api.Assertions.*;
+
 
 class MyHashTableTest {
 
@@ -33,7 +31,6 @@ class MyHashTableTest {
         MyHashTable myHashTable = new MyHashTable();
         myHashTable.put("a", "b");
         assertEquals("b", myHashTable.get("a"));
-        assertNull(myHashTable.get("b"));
     }
 
     @Test

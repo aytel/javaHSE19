@@ -33,7 +33,7 @@ public class MyHashTable {
     }
 
     /**
-     * @return Number of elements in the table
+     * @return number of elements in table
      */
     public int size() {
         return size;
@@ -56,10 +56,10 @@ public class MyHashTable {
     }
 
     /**
-     * Adds the pair (key, value) to the table.
+     * Puts a pair (key, value) to the table.
      * @param key
      * @param val
-     * @return previous value of the key in case it existed and null otherwise
+     * @return previouus value in case there was an element with the given key in the table and nul otherwise
      */
     public String put(String key, String val) {
         String ret = array[hash(key)].put(key, val);
@@ -75,9 +75,9 @@ public class MyHashTable {
     }
 
     /**
-     * Removes element with the given key from the table.
+     * Removes element with the given key from the table if such exests.
      * @param key
-     * @return value of the key in case it existed and null otherwise
+     * @return value in case there was an element with the given key in the table and null otherwise
      */
     public String remove(String key) {
         String ret = array[hash(key)].remove(key);
