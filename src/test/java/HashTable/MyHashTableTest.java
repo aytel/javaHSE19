@@ -1,10 +1,15 @@
 package HashTable;
 
+import org.junit.jupiter.api.Test;
+
+import java.io.FileWriter;
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class MyHashTableTest {
 
-    @org.junit.jupiter.api.Test
+    @Test
     void size() {
         MyHashTable myHashTable = new MyHashTable();
         myHashTable.put("a", "b");
@@ -15,7 +20,7 @@ class MyHashTableTest {
         assertEquals(2, myHashTable.size());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void contains() {
         MyHashTable myHashTable = new MyHashTable();
         myHashTable.put("a", "b");
@@ -23,14 +28,15 @@ class MyHashTableTest {
         assertFalse(myHashTable.contains("b"));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void get() {
         MyHashTable myHashTable = new MyHashTable();
         myHashTable.put("a", "b");
         assertEquals("b", myHashTable.get("a"));
+        assertNull(myHashTable.get("b"));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void put() {
         MyHashTable myHashTable = new MyHashTable();
         myHashTable.put("a", "a");
@@ -39,7 +45,7 @@ class MyHashTableTest {
         assertEquals(1, myHashTable.size());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void remove() {
         MyHashTable myHashTable = new MyHashTable();
         myHashTable.put("a", "a");
@@ -47,7 +53,7 @@ class MyHashTableTest {
         assertNull(myHashTable.get("a"));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void clear() {
         MyHashTable myHashTable = new MyHashTable();
         myHashTable.put("a", "a");

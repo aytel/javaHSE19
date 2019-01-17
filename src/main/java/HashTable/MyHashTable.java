@@ -32,18 +32,35 @@ public class MyHashTable {
         }
     }
 
+    /**
+     * @return Number of elements in the table
+     */
     public int size() {
         return size;
     }
 
+    /**
+     * @param key
+     * @return true in case there is an element with the given key in the table and false otherwise
+     */
     public boolean contains(String key) {
         return array[hash(key)].contains(key);
     }
 
+    /**
+     * @param key
+     * @return value in case there is an element with the given key in the table and null otherwise
+     */
     public String get(String key) {
         return array[hash(key)].get(key);
     }
 
+    /**
+     * Adds the pair (key, value) to the table.
+     * @param key
+     * @param val
+     * @return previous value of the key in case it existed and null otherwise
+     */
     public String put(String key, String val) {
         String ret = array[hash(key)].put(key, val);
 
@@ -57,6 +74,11 @@ public class MyHashTable {
         return ret;
     }
 
+    /**
+     * Removes element with the given key from the table.
+     * @param key
+     * @return value of the key in case it existed and null otherwise
+     */
     public String remove(String key) {
         String ret = array[hash(key)].remove(key);
 
@@ -67,6 +89,9 @@ public class MyHashTable {
         return ret;
     }
 
+    /**
+     * Removes all elements from the table and sets its size to 0.
+     */
     public void clear() {
         for (MyListPairStringString cur : array) {
             cur.clear();

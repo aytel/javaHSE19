@@ -1,12 +1,11 @@
 package HashTable;
 
-import java.util.Map;
 import java.util.Objects;
 
-public class MyListPairStringString {
+class MyListPairStringString {
     public class Node {
-        public Node next, prev;
-        public String key, val;
+        Node next, prev;
+        String key, val;
 
         Node(String key, String val) {
             this.key = key;
@@ -16,7 +15,7 @@ public class MyListPairStringString {
         }
     }
 
-    public Node head;
+    Node head;
 
     MyListPairStringString() {
         this.head = null;
@@ -34,17 +33,13 @@ public class MyListPairStringString {
         return find(node.next, key);
     }
 
-    public boolean contains(String key) {
+    boolean contains(String key) {
         Node node = find(head, key);
 
-        if (node == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return node != null;
     }
 
-    public String get(String key) {
+    String get(String key) {
         Node node = find(head, key);
 
         if (node == null) {
@@ -54,7 +49,7 @@ public class MyListPairStringString {
         }
     }
 
-    public String put(String key, String val) {
+    String put(String key, String val) {
         Node node = find(head, key);
 
         if (node == null) {
@@ -75,7 +70,7 @@ public class MyListPairStringString {
         }
     }
 
-    public String remove(String key) {
+    String remove(String key) {
         Node node = find(head, key);
 
         if (node == null) {
@@ -96,7 +91,7 @@ public class MyListPairStringString {
         }
     }
 
-    public void clear() {
+    void clear() {
         head = null;
     }
 }
