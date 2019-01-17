@@ -1,7 +1,7 @@
 .idea/workspace.xml
 .gradle/
-.build/
-.out/
+build/
+out/
 src/index-files
 src/jquery
 src/resources
