@@ -1,5 +1,6 @@
 package HashTable;
 
+import java.util.Arrays;
 import java.util.Map.Entry;
 
 public class MyHashTable {
@@ -19,9 +20,7 @@ public class MyHashTable {
 
     private void rebuild() {
         MyListPairStringString[] newArray = new MyListPairStringString[2 * array.length];
-        for (int i = 0; i < newArray.length; i++) {
-            newArray[i] = new MyListPairStringString();
-        }
+        Arrays.setAll(newArray, i -> new MyListPairStringString());
 
         MyListPairStringString[] oldArray = array;
         array = newArray;
