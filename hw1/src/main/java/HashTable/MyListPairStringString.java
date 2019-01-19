@@ -48,11 +48,9 @@ public class MyListPairStringString {
         }
     }
 
-    private Node head;
+    private Node head = null;
 
-    MyListPairStringString() {
-        this.head = null;
-    }
+    MyListPairStringString() {}
 
     private Node find(Node node, String key) {
         if (node == null) {
