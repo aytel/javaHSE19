@@ -1,11 +1,44 @@
 package HashTable;
 
 import java.util.Objects;
+import java.util.AbstractMap.SimpleEntry;
 
-class MyListPairStringString {
-    protected class Node {
-        protected Node next, prev;
-        protected String key, val;
+public class MyListPairStringString {
+    private class Node {
+        private Node next, prev;
+        private String key, val;
+
+        public Node getNext() {
+            return next;
+        }
+
+        public void setNext(Node next) {
+            this.next = next;
+        }
+
+        public Node getPrev() {
+            return prev;
+        }
+
+        public void setPrev(Node prev) {
+            this.prev = prev;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public String getVal() {
+            return val;
+        }
+
+        public void setVal(String val) {
+            this.val = val;
+        }
 
         Node(String key, String val) {
             this.key = key;
@@ -15,7 +48,7 @@ class MyListPairStringString {
         }
     }
 
-    protected Node head;
+    private Node head;
 
     MyListPairStringString() {
         this.head = null;
@@ -26,11 +59,11 @@ class MyListPairStringString {
             return null;
         }
 
-        if (Objects.equals(node.key, key)) {
+        if (Objects.equals(node.getKey(), key)) {
             return node;
         }
 
-        return find(node.next, key);
+        return find(node.getNext(), key);
     }
 
     protected boolean contains(String key) {
@@ -55,17 +88,17 @@ class MyListPairStringString {
         if (node == null) {
             Node newHead = new Node(key, val);
 
-            newHead.next = head;
+            newHead.setNext(head);
 
             if (head != null) {
-                head.prev = newHead;
+                head.setPrev(newHead);
             }
             head = newHead;
 
             return null;
         } else {
-            String ret = node.val;
-            node.val = val;
+            String ret = node.getVal();
+            node.setVal(val);
             return ret;
         }
     }
@@ -76,14 +109,14 @@ class MyListPairStringString {
         if (node == null) {
             return null;
         } else {
-            String ret = node.val;
+            String ret = node.getVal();
 
             if (node == head) {
-                head = node.next;
+                head = node.getNext();
             } else {
-                node.prev.next = node.next;
-                if (node.next != null) {
-                    node.next.prev = node.prev;
+                node.getPrev().setNext(node.getNext());
+                if (node.getNext() != null) {
+                    node.getNext().setPrev(node.prev);
                 }
             }
 
@@ -93,5 +126,14 @@ class MyListPairStringString {
 
     protected void clear() {
         head = null;
+    }
+
+    protected SimpleEntry<String, String> pop() {
+        if (head == null) {
+            return null;
+        }
+        Node oldHead = head;
+        head = head.getNext();
+        return new SimpleEntry<>(oldHead.getKey(), oldHead.getVal());
     }
 }

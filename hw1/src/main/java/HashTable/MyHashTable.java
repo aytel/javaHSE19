@@ -1,5 +1,7 @@
 package HashTable;
 
+import java.util.Map.Entry;
+
 public class MyHashTable {
     private MyListPairStringString[] array;
     private int size;
@@ -26,8 +28,8 @@ public class MyHashTable {
 
         size = 0;
         for (MyListPairStringString cur : oldArray) {
-            for (MyListPairStringString.Node node = cur.head; node != null; node = node.next) {
-                put(node.key, node.val);
+            for (Entry<String, String> entry = cur.pop(); entry != null; entry = cur.pop()) {
+                put(entry.getKey(), entry.getValue());
             }
         }
     }
