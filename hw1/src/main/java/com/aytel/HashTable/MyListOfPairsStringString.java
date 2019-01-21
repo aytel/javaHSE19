@@ -1,12 +1,14 @@
-package HashTable;
+package com.aytel.HashTable;
 
-import java.util.Objects;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.Objects;
 
-public class MyListPairStringString {
+class MyListOfPairsStringString {
     private class Node {
-        private Node next, prev;
-        private String key, val;
+        private Node next;
+        private Node prev;
+        private String key;
+        private String val;
 
         public Node getNext() {
             return next;
@@ -50,7 +52,7 @@ public class MyListPairStringString {
 
     private Node head = null;
 
-    MyListPairStringString() {}
+    MyListOfPairsStringString() {}
 
     private Node find(Node node, String key) {
         if (node == null) {

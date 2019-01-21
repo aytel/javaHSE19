@@ -1,14 +1,22 @@
-package HashTable;
+package com.aytelHashTable;
 
+import com.aytel.HashTable.MyHashTable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class MyHashTableTest {
 
+    private MyHashTable myHashTable;
+
+    @BeforeEach
+    void initialize() {
+        myHashTable = new MyHashTable();
+    }
+
     @Test
     void size() {
-        MyHashTable myHashTable = new MyHashTable();
         myHashTable.put("a", "b");
         assertEquals(1, myHashTable.size());
         myHashTable.put("a", "c");
@@ -19,7 +27,6 @@ class MyHashTableTest {
 
     @Test
     void contains() {
-        MyHashTable myHashTable = new MyHashTable();
         myHashTable.put("a", "b");
         assertTrue(myHashTable.contains("a"));
         assertFalse(myHashTable.contains("b"));
@@ -27,14 +34,12 @@ class MyHashTableTest {
 
     @Test
     void get() {
-        MyHashTable myHashTable = new MyHashTable();
         myHashTable.put("a", "b");
         assertEquals("b", myHashTable.get("a"));
     }
 
     @Test
     void put() {
-        MyHashTable myHashTable = new MyHashTable();
         myHashTable.put("a", "a");
         assertEquals(1, myHashTable.size());
         myHashTable.put("a", "b");
@@ -43,7 +48,6 @@ class MyHashTableTest {
 
     @Test
     void remove() {
-        MyHashTable myHashTable = new MyHashTable();
         myHashTable.put("a", "a");
         myHashTable.remove("a");
         assertNull(myHashTable.get("a"));
@@ -51,7 +55,6 @@ class MyHashTableTest {
 
     @Test
     void clear() {
-        MyHashTable myHashTable = new MyHashTable();
         myHashTable.put("a", "a");
         myHashTable.clear();
         assertNull(myHashTable.get("a"));
