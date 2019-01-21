@@ -14,6 +14,7 @@ public class MyHashTable {
     private MyListOfPairsStringString[] array;
     private int size;
     private final double LOAD_FACTOR;
+    private final int initCapacity;
 
     /**
      * Makes a hashtable with empty lists.
@@ -29,7 +30,8 @@ public class MyHashTable {
             throw new IllegalArgumentException("Capacity must be more than 0");
         }
         this.LOAD_FACTOR = LOAD_FACTOR;
-        this.array = new MyListOfPairsStringString[capacity];
+        this.initCapacity = capacity;
+        this.array = new MyListOfPairsStringString[initCapacity];
         Arrays.setAll(this.array, i -> new MyListOfPairsStringString());
         this.size = 0;
     }
@@ -118,9 +120,8 @@ public class MyHashTable {
 
     /** Removes all elements from the hashtable and sets its size to 0. */
     public void clear() {
-        for (MyListOfPairsStringString cur : array) {
-            cur.clear();
-        }
+        array = new MyListOfPairsStringString[initCapacity];
+        Arrays.setAll(array, i -> new MyListOfPairsStringString());
         size = 0;
     }
 }

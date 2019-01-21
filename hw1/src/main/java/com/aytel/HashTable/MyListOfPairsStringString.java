@@ -1,7 +1,6 @@
 package com.aytel.HashTable;
 
 import java.util.AbstractMap.SimpleEntry;
-import java.util.Objects;
 
 class MyListOfPairsStringString {
     private class Node {
@@ -59,7 +58,7 @@ class MyListOfPairsStringString {
             return null;
         }
 
-        if (Objects.equals(node.getKey(), key)) {
+        if (node.getKey().equals(key)) {
             return node;
         }
 
