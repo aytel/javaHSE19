@@ -38,7 +38,10 @@ public class MyHashTable {
         this(0.5, 10);
     }
 
-    private int hash(String key) {
+    private int hash(String key) throws IllegalArgumentException {
+        if (key == null) {
+            throw new IllegalArgumentException("Key must be not null");
+        }
         return Math.abs(key.hashCode()) % array.length;
     }
 
@@ -66,7 +69,7 @@ public class MyHashTable {
      * Checks if hashtable contains the element.
      * @return true in case there is an element with the given key in the hashtable and false otherwise
      */
-    public boolean contains(String key) {
+    public boolean contains(String key) throws IllegalArgumentException {
         return array[hash(key)].contains(key);
     }
 
@@ -74,14 +77,13 @@ public class MyHashTable {
      * Gets the value of the given key.
      * @return value in case there is an element with the given key in the hashtable and null otherwise
      */
-    public String get(String key) {
+    public String get(String key) throws IllegalArgumentException {
         return array[hash(key)].get(key);
     }
 
     /**
      * Puts a pair (key, value) to the hashtable.
      * @return previous value in case there was an element with the given key in the hashtable and nul otherwise
-     * @throws IllegalArgumentException in case value is null
      */
     public String put(String key, String val) throws IllegalArgumentException {
         if (val == null) {
@@ -104,7 +106,7 @@ public class MyHashTable {
      * Removes element with the given key from the hashtable if such exists.
      * @return value in case there was an element with the given key in the hashtable and null otherwise
      */
-    public String remove(String key) {
+    public String remove(String key) throws IllegalArgumentException {
         String foundValue = array[hash(key)].remove(key);
 
         if (foundValue != null) {
