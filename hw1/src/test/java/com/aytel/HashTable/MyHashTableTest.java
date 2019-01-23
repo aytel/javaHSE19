@@ -1,6 +1,5 @@
-package com.aytelHashTable;
+package com.aytel.HashTable;
 
-import com.aytel.HashTable.MyHashTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -44,12 +43,15 @@ class MyHashTableTest {
         assertEquals(1, myHashTable.size());
         myHashTable.put("a", "b");
         assertEquals(1, myHashTable.size());
+        assertThrows(IllegalArgumentException.class, () -> { myHashTable.put("a", null); });
+        assertThrows(IllegalArgumentException.class, () -> { myHashTable.put(null, "a"); });
     }
 
     @Test
     void remove() {
         myHashTable.put("a", "a");
         myHashTable.remove("a");
+        myHashTable.remove("b");
         assertNull(myHashTable.get("a"));
     }
 

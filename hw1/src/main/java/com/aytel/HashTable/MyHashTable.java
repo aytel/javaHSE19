@@ -20,7 +20,6 @@ public class MyHashTable {
      * Makes a hashtable with empty lists.
      * @param LOAD_FACTOR coefficient of rehashing, must be not less than 0
      * @param capacity number of buckets, must be more than 0
-     * @throws IllegalArgumentException
      */
     public MyHashTable(double LOAD_FACTOR, int capacity) throws IllegalArgumentException {
         if (LOAD_FACTOR < 0) {

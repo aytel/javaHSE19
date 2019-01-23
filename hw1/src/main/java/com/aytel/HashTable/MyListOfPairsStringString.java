@@ -29,10 +29,6 @@ class MyListOfPairsStringString {
             return key;
         }
 
-        public void setKey(String key) {
-            this.key = key;
-        }
-
         public String getVal() {
             return val;
         }
