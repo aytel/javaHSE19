@@ -41,17 +41,17 @@ class MyHashTableTest {
     void put() {
         myHashTable.put("a", "a");
         assertEquals(1, myHashTable.size());
-        myHashTable.put("a", "b");
+        assertEquals("a", myHashTable.put("a", "b"));
         assertEquals(1, myHashTable.size());
-        assertThrows(IllegalArgumentException.class, () -> { myHashTable.put("a", null); });
-        assertThrows(IllegalArgumentException.class, () -> { myHashTable.put(null, "a"); });
+        assertThrows(IllegalArgumentException.class, () -> myHashTable.put("a", null));
+        assertThrows(IllegalArgumentException.class, () -> myHashTable.put(null, "a"));
     }
 
     @Test
     void remove() {
         myHashTable.put("a", "a");
-        myHashTable.remove("a");
-        myHashTable.remove("b");
+        assertEquals("a", myHashTable.remove("a"));
+        assertNull(myHashTable.remove("b"));
         assertNull(myHashTable.get("a"));
     }
 

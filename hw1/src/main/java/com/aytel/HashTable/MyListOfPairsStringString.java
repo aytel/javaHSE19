@@ -119,10 +119,6 @@ class MyListOfPairsStringString {
         }
     }
 
-    protected void clear() {
-        head = null;
-    }
-
     protected SimpleEntry<String, String> pop() {
         if (head == null) {
             return null;
