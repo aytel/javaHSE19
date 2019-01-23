@@ -106,5 +106,41 @@ public class Trie {
         return true;
     }
 
+    public boolean contains(String val) {
+        if (val == null) {
+            throw new IllegalArgumentException("value must be not null");
+        }
+
+        Node current = root;
+
+        for (Character c : val.toCharArray()) {
+            if (current.getNext(c) == null) {
+                return false;
+            } else {
+                current = current.getNext(c);
+            }
+        }
+
+        return current.getEnd();
+    }
+
+    public int howManyStartWithPrefix(String prefix) {
+        if (prefix == null) {
+            throw new IllegalArgumentException("value must be not null");
+        }
+
+        Node current = root;
+
+        for (Character c : prefix.toCharArray()) {
+            if (current.getNext(c) == null) {
+                return 0;
+            } else {
+                current = current.getNext(c);
+            }
+        }
+
+        return current.size();
+    }
+
 
 }
