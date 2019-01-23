@@ -83,11 +83,15 @@ public class Trie {
         path.push(root);
 
         for (Character c : val.toCharArray()) {
-            Node next = path.peek();
+            Node next = path.peek().getNext(c);
             if (next == null) {
                 return false;
             }
             path.push(next);
+        }
+
+        if (!path.peek().getEnd()) {
+            return false;
         }
 
         path.peek().setEnd(false);
