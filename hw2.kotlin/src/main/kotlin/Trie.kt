@@ -28,7 +28,7 @@ class Trie {
             this.end = isEnd != 0
             this.size = isEnd
 
-            for (i in 0 until edgesCount) {
+            repeat(edgesCount) {
                 val edge: Char = ins.read().toChar()
                 val to = Node(ins)
                 edges[edge] = to
