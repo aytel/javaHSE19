@@ -123,7 +123,7 @@ public class Trie {
     }
 
     /**
-     * Removes value fron the trie if such exists.
+     * Removes value from the trie if such exists.
      * @return true in case there was such value in trie and false otherwise.
      */
     public boolean remove(String val) throws IllegalArgumentException {
@@ -205,7 +205,7 @@ public class Trie {
         root.serialize(out);
     }
 
-    /** Decodes trie from byte sequense. */
+    /** Decodes trie from byte sequenсe. */
     public void deserialize(InputStream in) throws IOException {
         root = new Node(in);
     }
