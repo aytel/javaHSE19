@@ -1,6 +1,11 @@
 package com.aytel.Trie;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 public class Trie {
@@ -10,6 +15,24 @@ public class Trie {
         private HashMap<Character, Node> edges = new HashMap<>();
 
         Node(){}
+
+        Node(InputStream in) throws IOException {
+            int isEnd = in.read();
+            int arraySize = in.read();
+            var edgesCountArray = new byte[arraySize];
+            in.read(edgesCountArray);
+            int edgesCount = (new BigInteger(edgesCountArray)).intValue();
+
+            this.end = (isEnd != 0);
+            this.size = isEnd;
+
+            for (int i = 0; i < edgesCount; i++) {
+                char edge = (char)in.read();
+                Node to = new Node(in);
+                edges.put(edge, to);
+                this.size += to.size();
+            }
+        }
 
         int size() {
             return this.size;
@@ -37,6 +60,20 @@ public class Trie {
 
         void setEnd(boolean isEnd) {
             end = isEnd;
+        }
+
+        void serialize(OutputStream out) throws IOException {
+            byte isEnd = (byte)(this.end ? 1 : 0);
+            byte[] edgesCount = BigInteger.valueOf(edges.size()).toByteArray();
+            byte arraySize = (byte)edgesCount.length;
+            out.write(isEnd);
+            out.write(arraySize);
+            out.write(edgesCount);
+
+            for (Map.Entry<Character, Node> entry : edges.entrySet()) {
+                out.write((byte)entry.getKey().charValue());
+                entry.getValue().serialize(out);
+            }
         }
     }
 
@@ -146,5 +183,11 @@ public class Trie {
         return current.size();
     }
 
+    public void serialize(OutputStream out) throws IOException {
+        root.serialize(out);
+    }
 
+    public void deserialize(InputStream in) throws IOException {
+        root = new Node(in);
+    }
 }

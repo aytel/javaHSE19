@@ -3,11 +3,15 @@ package com.aytel.Trie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TrieTest {
 
-    Trie trie;
+    private Trie trie;
 
     @BeforeEach
     void init() {
@@ -55,5 +59,26 @@ class TrieTest {
         assertEquals(1, trie.howManyStartWithPrefix("a"));
         trie.remove("ab");
         assertEquals(0, trie.howManyStartWithPrefix("a"));
+    }
+
+    @Test
+    void serialization() throws IOException {
+        trie.add("a");
+        trie.add("b");
+        trie.add("abc");
+        trie.add("");
+
+        var baos = new ByteArrayOutputStream(1000);
+        trie.serialize(baos);
+
+        var gotTrie = new Trie();
+        gotTrie.deserialize(new ByteArrayInputStream(baos.toByteArray()));
+
+        assertTrue(gotTrie.contains("a"));
+        assertTrue(gotTrie.contains("abc"));
+        assertTrue(gotTrie.contains(""));
+        assertEquals(4, gotTrie.size());
+        assertEquals(1, gotTrie.howManyStartWithPrefix("ab"));
+        assertEquals(2, gotTrie.howManyStartWithPrefix("a"));
     }
 }
