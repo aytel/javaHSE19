@@ -8,6 +8,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+/**
+ * A trie of strings.
+ * Allows to add and remove elements.
+ * Also is serializable with correspondins methods.
+ */
 public class Trie {
     private class Node {
         private int size = 0;
@@ -21,13 +26,13 @@ public class Trie {
             int arraySize = in.read();
             var edgesCountArray = new byte[arraySize];
             in.read(edgesCountArray);
-            int edgesCount = (new BigInteger(edgesCountArray)).intValue();
+            var edgesCount = (new BigInteger(edgesCountArray)).intValue();
 
             this.end = (isEnd != 0);
             this.size = isEnd;
 
             for (int i = 0; i < edgesCount; i++) {
-                char edge = (char)in.read();
+                var edge = (char)in.read();
                 Node to = new Node(in);
                 edges.put(edge, to);
                 this.size += to.size();
@@ -63,9 +68,9 @@ public class Trie {
         }
 
         void serialize(OutputStream out) throws IOException {
-            byte isEnd = (byte)(this.end ? 1 : 0);
-            byte[] edgesCount = BigInteger.valueOf(edges.size()).toByteArray();
-            byte arraySize = (byte)edgesCount.length;
+            var isEnd = (byte)(this.end ? 1 : 0);
+            var edgesCount = BigInteger.valueOf(edges.size()).toByteArray();
+            var arraySize = (byte)edgesCount.length;
             out.write(isEnd);
             out.write(arraySize);
             out.write(edgesCount);
@@ -79,12 +84,18 @@ public class Trie {
 
     private Node root = new Node();
 
+    /** Creates empty trie. */
     public Trie(){}
 
+    /** Returns number of string in trie. */
     public int size() {
         return root.size();
     }
 
+    /**
+     * Adds value to the trie.
+     * @return true in case there was such value in trie and false otherwise.
+     */
     public boolean add(String val) throws IllegalArgumentException {
         if (val == null) {
             throw new IllegalArgumentException("value must be not null");
@@ -111,12 +122,16 @@ public class Trie {
         }
     }
 
+    /**
+     * Removes value fron the trie if such exists.
+     * @return true in case there was such value in trie and false otherwise.
+     */
     public boolean remove(String val) throws IllegalArgumentException {
         if (val == null) {
             throw new IllegalArgumentException("value must be not null");
         }
 
-        Stack<Node> path = new Stack<>();
+        var path = new Stack<Node>();
         path.push(root);
 
         for (Character c : val.toCharArray()) {
@@ -147,6 +162,7 @@ public class Trie {
         return true;
     }
 
+    /** Returns true in case there is such value in trie and false otherwise. */
     public boolean contains(String val) {
         if (val == null) {
             throw new IllegalArgumentException("value must be not null");
@@ -165,6 +181,7 @@ public class Trie {
         return current.getEnd();
     }
 
+    /** Returns the number of strings in trie which start with the given prefix. */
     public int howManyStartWithPrefix(String prefix) {
         if (prefix == null) {
             throw new IllegalArgumentException("value must be not null");
@@ -183,10 +200,12 @@ public class Trie {
         return current.size();
     }
 
+    /** Encodes trie into byte sequence. */
     public void serialize(OutputStream out) throws IOException {
         root.serialize(out);
     }
 
+    /** Decodes trie from byte sequense. */
     public void deserialize(InputStream in) throws IOException {
         root = new Node(in);
     }
