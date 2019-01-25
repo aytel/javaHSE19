@@ -1,3 +1,4 @@
+import com.aytel.Trie
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.BeforeEach
@@ -8,11 +9,11 @@ import java.io.ByteArrayOutputStream
 
 internal class TrieTest {
 
-    private lateinit var trie: com.aytel.Trie
+    private lateinit var trie: Trie
 
     @BeforeEach
     fun init() {
-        trie = com.aytel.Trie()
+        trie = Trie()
     }
 
     @Test
@@ -66,7 +67,7 @@ internal class TrieTest {
         val baos = ByteArrayOutputStream(1000)
         trie.serialize(baos)
 
-        val gotTrie = com.aytel.Trie()
+        val gotTrie = Trie()
         gotTrie.deserialize(ByteArrayInputStream(baos.toByteArray()))
 
         assertTrue(gotTrie.contains("a"))

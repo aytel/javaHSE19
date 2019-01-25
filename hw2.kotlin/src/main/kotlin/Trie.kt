@@ -4,6 +4,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.math.BigInteger
 import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * A trie of strings.
@@ -16,7 +17,7 @@ class Trie {
     private class Node() {
         internal var size: Int = 0
         internal var end: Boolean = false
-        private val edges = HashMap<Char, Node>()
+        internal val edges = HashMap<Char, Trie.Node>()
 
         internal constructor(ins: InputStream) : this() {
             val isEnd: Int = ins.read()
@@ -33,19 +34,6 @@ class Trie {
                 val to = Node(ins)
                 edges[edge] = to
                 this.size += to.size
-            }
-
-        }
-
-        internal fun getNext(c: Char): Node? {
-            return edges[c]
-        }
-
-        internal fun setNext(c: Char, to: Node?) {
-            if (to is Node) {
-                edges[c] = to
-            } else {
-                edges.remove(c)
             }
         }
 
@@ -79,11 +67,11 @@ class Trie {
         current.size++
 
         value.forEach { c: Char ->
-            var next: Node? = current.getNext(c)
+            var next: Node? = current.edges[c]
 
             if (next !is Node) {
                 next = Node()
-                current.setNext(c, next)
+                current.edges[c] = next
             }
             next.size++
             current = next
@@ -105,7 +93,7 @@ class Trie {
         val path = Stack<Node>()
         path.push(root)
 
-        value.forEach { c: Char -> path.push(path.peek().getNext(c) ?: return false) }
+        value.forEach { c: Char -> path.push(path.peek().edges[c] ?: return false) }
 
         if (!path.peek().end) {
             return false
@@ -118,7 +106,7 @@ class Trie {
         while (!path.empty()) {
             val current: Node = path.pop()!!
             if (prev.size == 0) {
-                current.setNext(value[path.size], null)
+                current.edges.remove(value[path.size])
             }
             current.size--
             prev = current
@@ -131,7 +119,7 @@ class Trie {
     fun contains(value: String): Boolean {
         var current: Node = root
 
-        value.forEach { c: Char -> current = current.getNext(c) ?: return false }
+        value.forEach { c: Char -> current = current.edges[c] ?: return false }
 
         return current.end
     }
@@ -140,7 +128,7 @@ class Trie {
     fun howManyStartWithPrefix(prefix: String): Int {
         var current: Node = root
 
-        prefix.forEach { c: Char -> current = current.getNext(c) ?: return 0 }
+        prefix.forEach { c: Char -> current = current.edges[c] ?: return 0 }
 
         return current.size
     }
