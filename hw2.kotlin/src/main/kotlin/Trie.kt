@@ -13,7 +13,7 @@ import kotlin.collections.HashMap
  *
  * @constructor Creates empty trie.
  */
-class Trie {
+class Trie: Serializable {
     private class Node() {
         internal var size: Int = 0
         internal var end: Boolean = false
@@ -134,12 +134,12 @@ class Trie {
     }
 
     /** Encodes trie into byte sequence. */
-    fun serialize(ots: OutputStream) {
+    override fun serialize(ots: OutputStream) {
         root.serialize(ots)
     }
 
     /** Decodes trie from byte sequence. */
-    fun deserialize(ins: InputStream) {
+    override fun deserialize(ins: InputStream) {
         root = Node(ins)
     }
 }
