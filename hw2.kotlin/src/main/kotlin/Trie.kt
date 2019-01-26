@@ -64,7 +64,7 @@ class Trie: Serializable {
      */
     fun add(value: String): Boolean {
         if (contains(value)) {
-            return false
+            return true
         }
 
         var current: Node = root
@@ -82,7 +82,7 @@ class Trie: Serializable {
         }
 
         current.end = true
-        return true
+        return false
     }
 
     /**
