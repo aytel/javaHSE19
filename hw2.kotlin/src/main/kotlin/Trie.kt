@@ -63,6 +63,10 @@ class Trie: Serializable {
      * @return true in case there was such value in trie and false otherwise.
      */
     fun add(value: String): Boolean {
+        if (contains(value)) {
+            return false
+        }
+
         var current: Node = root
         current.size++
 
@@ -77,12 +81,8 @@ class Trie: Serializable {
             current = next
         }
 
-        return if (current.end) {
-            true
-        } else {
-            current.end = true
-            false
-        }
+        current.end = true
+        return true
     }
 
     /**

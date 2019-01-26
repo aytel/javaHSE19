@@ -28,6 +28,7 @@ internal class TrieTest {
         assertFalse(trie.add("aba"))
         assertTrue(trie.add("aba"))
         assertFalse(trie.add("a"))
+        assertEquals(2, trie.size)
     }
 
     @Test
