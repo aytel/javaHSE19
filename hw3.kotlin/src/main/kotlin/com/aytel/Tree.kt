@@ -5,10 +5,24 @@ internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean
 
     private inner class Node(val element: T) {
         internal var left: Node? = null
+            set(value) {
+                field = value
+                update()
+            }
+
         internal var right: Node? = null
+            set(value) {
+                field = value
+                update()
+            }
+
         internal var size: Int = 1
             private set
         internal val listNode: ListNode<Node> = ListNode(this)
+
+        internal fun update() {
+            size = 1 + (left?.size ?: 0) + (right?.size ?: 0)
+        }
 
         internal fun iterator(): MutableIterator<T> = object : MutableIterator<T> {
 
@@ -80,7 +94,7 @@ internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean
             first
         } else {
             second.left = merge(first, second.left)
-            first
+            second
         }
     }
 
