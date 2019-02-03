@@ -1,5 +1,6 @@
 package com.aytel
 
+/** Kek */
 internal class Tree<T>(val compare: (T, T) -> Int, val inverted: Boolean = false) {
 
     internal constructor(tree: Tree<T>, inverted: Boolean) : this(tree.compare, inverted) {

@@ -1,6 +1,6 @@
 package com.aytel
 
-class ListNode<T>(internal val element: T) {
+internal class ListNode<T>(internal val element: T) {
     internal var next: ListNode<T>? = null
     internal var prev: ListNode<T>? = null
 
