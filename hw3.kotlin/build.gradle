@@ -44,5 +44,5 @@ dokka {
     outputFormat = 'html'
     outputDirectory = "javadoc"
 
-    //includeNonPublic = true
+    includeNonPublic = true
 }

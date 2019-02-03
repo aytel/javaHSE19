@@ -1,11 +1,20 @@
 package com.aytel
 
 import java.lang.ClassCastException
+import java.util.*
 import kotlin.Comparator
 import kotlin.NoSuchElementException
 
+/**
+ * Implements [kotlin.collections.MutableSet] interface with internal [Tree], which is simple treap.
+ * Compares all elements using natural order or with comparator, given in the constructor.
+ * All methods can throw [kotlin.ClassCastException] in case types are not comparable.
+ *
+ * @constructor Creates MyTreeSet with given comparator and given internal [Tree].
+ */
 class MyTreeSet<T> private constructor(private val comparator: Comparator<T>, private val tree: Tree<T>) : MutableSet<T> {
 
+    /** Creates empty MyTreeSet with given comparator or with default in case it was called without arguments. */
     constructor(comparator: Comparator<T> = Comparator { a: T, b: T ->
         @Suppress("UNCHECKED_CAST")
         (a as? Comparable<T>) ?: throw ClassCastException()
