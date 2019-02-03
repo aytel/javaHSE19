@@ -155,10 +155,6 @@ internal class Tree<T>(val compare: (T, T) -> Int, val inverted: Boolean = false
 
     private var lastModification: Int = 0
     private var root: Node? = null
-        set(value) {
-            field = value
-            lastModification++
-        }
 
     internal val size: Int
         get() = root?.size ?: 0
@@ -214,7 +210,12 @@ internal class Tree<T>(val compare: (T, T) -> Int, val inverted: Boolean = false
 
         root = merge(lower, merge(cur, higher))!!
 
-        return eq?.element?.equals(element) == true
+        return if (eq != null) {
+            lastModification++
+            true
+        } else {
+            false
+        }
     }
 
     internal fun remove(element: T): Boolean {
@@ -224,7 +225,12 @@ internal class Tree<T>(val compare: (T, T) -> Int, val inverted: Boolean = false
 
         root = merge(lower, higher)
 
-        return eq?.element?.equals(element) == true
+        return if (eq != null) {
+            lastModification++
+            true
+        } else {
+            false
+        }
     }
 
     internal fun first(): T? = if (!inverted) root?.first()?.element else root?.last()?.element
@@ -232,38 +238,46 @@ internal class Tree<T>(val compare: (T, T) -> Int, val inverted: Boolean = false
     internal fun last(): T? = if (inverted) root?.first()?.element else root?.last()?.element
 
     internal fun lower(element: T): T? {
-        val (lower, _, higher) = splitToThree(element)
-        return if (!inverted) {
+        val (lower, eq, higher) = splitToThree(element)
+        val retValue = if (!inverted) {
             lower?.last()?.element
         } else {
             higher?.first()?.element
         }
+        root = merge(lower, merge(eq, higher))
+        return retValue
     }
 
     internal fun higher(element: T): T? {
-        val (lower, _, higher) = splitToThree(element)
-        return if (!inverted) {
+        val (lower, eq, higher) = splitToThree(element)
+        val retValue = if (!inverted) {
             higher?.first()?.element
         } else {
             lower?.last()?.element
         }
+        root = merge(lower, merge(eq, higher))
+        return retValue
     }
 
     internal fun floor(element: T): T? {
         val (lower, eq, higher) = splitToThree(element)
-        return if (!inverted) {
+        val retValue = if (!inverted) {
             eq?.element ?: higher?.first()?.element
         } else {
             eq?.element ?: lower?.last()?.element
         }
+        root = merge(lower, merge(eq, higher))
+        return retValue
     }
 
     internal fun ceiling(element: T): T? {
         val (lower, eq, higher) = splitToThree(element)
-        return if (!inverted) {
+        val retValue = if (!inverted) {
             eq?.element ?: lower?.last()?.element
         } else {
             eq?.element ?: higher?.first()?.element
         }
+        root = merge(lower, merge(eq, higher))
+        return retValue
     }
 }
