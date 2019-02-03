@@ -25,10 +25,15 @@ internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean
         }
 
         internal fun iterator(): MutableIterator<T> = object : MutableIterator<T> {
+            private var modificationIndex = lastModification
             private var cur: Tree<T>.Node? = this@Node.first()
             private var prev: Tree<T>.Node? = null
 
             override fun next(): T {
+                if (lastModification != modificationIndex) {
+                    throw ConcurrentModificationException()
+                }
+
                 if (cur == null) {
                     throw NoSuchElementException()
                 } else {
@@ -39,12 +44,22 @@ internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean
                 }
             }
 
-            override fun hasNext(): Boolean = cur != null
+            override fun hasNext(): Boolean {
+                if (lastModification != modificationIndex) {
+                    throw ConcurrentModificationException()
+                }
+                return cur != null
+            }
 
             override fun remove() {
+                if (lastModification != modificationIndex) {
+                    throw ConcurrentModificationException()
+                }
+
                 if (prev != null) {
                     this@Tree.remove(prev!!.element)
                     prev = null
+                    modificationIndex = lastModification
                 } else {
                     throw IllegalStateException()
                 }
@@ -52,10 +67,15 @@ internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean
         }
 
         internal fun descendingIterator(): MutableIterator<T> = object : MutableIterator<T> {
+            private var modificationIndex = lastModification
             private var cur: Tree<T>.Node? = this@Node.last()
             private var prev: Tree<T>.Node? = null
 
             override fun next(): T {
+                if (lastModification != modificationIndex) {
+                    throw ConcurrentModificationException()
+                }
+
                 if (cur == null) {
                     throw NoSuchElementException()
                 } else {
@@ -66,12 +86,22 @@ internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean
                 }
             }
 
-            override fun hasNext(): Boolean = cur != null
+            override fun hasNext(): Boolean {
+                if (lastModification != modificationIndex) {
+                    throw ConcurrentModificationException()
+                }
+                return cur != null
+            }
 
             override fun remove() {
+                if (lastModification != modificationIndex) {
+                    throw ConcurrentModificationException()
+                }
+
                 if (prev != null) {
                     this@Tree.remove(prev!!.element)
                     prev = null
+                    modificationIndex = lastModification
                 } else {
                     throw IllegalStateException()
                 }
@@ -118,7 +148,12 @@ internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean
         }
     }
 
+    private var lastModification: Int = 0
     private var root: Node? = null
+        set(value) {
+            field = value
+            lastModification++
+        }
 
     internal val size: Int
         get() = root?.size ?: 0
