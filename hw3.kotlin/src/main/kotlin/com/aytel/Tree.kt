@@ -25,14 +25,15 @@ internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean
         }
 
         internal fun iterator(): MutableIterator<T> = object : MutableIterator<T> {
-
-            var cur: Tree<T>.Node? = this@Node.first()
+            private var cur: Tree<T>.Node? = this@Node.first()
+            private var prev: Tree<T>.Node? = null
 
             override fun next(): T {
                 if (cur == null) {
                     throw NoSuchElementException()
                 } else {
                     val ret = cur!!.element
+                    prev = cur
                     cur = cur!!.listNode.next?.element
                     return ret
                 }
@@ -41,8 +42,9 @@ internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean
             override fun hasNext(): Boolean = cur != null
 
             override fun remove() {
-                if (cur != null) {
-                    this@Tree.remove(cur!!.element)
+                if (prev != null) {
+                    this@Tree.remove(prev!!.element)
+                    prev = null
                 } else {
                     throw IllegalStateException()
                 }
@@ -50,14 +52,15 @@ internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean
         }
 
         internal fun descendingIterator(): MutableIterator<T> = object : MutableIterator<T> {
-
-            var cur: Tree<T>.Node? = this@Node.first()
+            private var cur: Tree<T>.Node? = this@Node.last()
+            private var prev: Tree<T>.Node? = null
 
             override fun next(): T {
                 if (cur == null) {
                     throw NoSuchElementException()
                 } else {
                     val ret = cur!!.element
+                    prev = cur
                     cur = cur!!.listNode.prev?.element
                     return ret
                 }
@@ -66,8 +69,9 @@ internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean
             override fun hasNext(): Boolean = cur != null
 
             override fun remove() {
-                if (cur != null) {
-                    this@Tree.remove(cur!!.element)
+                if (prev != null) {
+                    this@Tree.remove(prev!!.element)
+                    prev = null
                 } else {
                     throw IllegalStateException()
                 }
@@ -98,21 +102,18 @@ internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean
         }
     }
 
-    private fun split(node: Node?, value: T?): Pair<Node?, Node?> {
-        if (value == null) {
-            return Pair(node, null)
-        }
+    private fun split(node: Node?, value: T): Pair<Node?, Node?> {
 
         if (node == null) {
             return Pair(null, null)
         }
         return if (node.element >= value) {
             val temp = split(node.left, value)
-            node.right = temp.second
+            node.left = temp.second
             temp.copy(second = node)
         } else {
             val temp = split(node.right, value)
-            node.left = temp.first
+            node.right = temp.first
             temp.copy(first = node)
         }
     }
@@ -124,16 +125,16 @@ internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean
 
     internal fun contains(element: T): Boolean = floor(element)?.compareTo(element) == 0
 
-    internal fun iterator(): MutableIterator<T> = (if (inverted) root?.iterator() else root?.descendingIterator()) ?: object: MutableIterator<T> {
-        override fun remove() = throw NoSuchElementException()
+    internal operator fun iterator(): MutableIterator<T> = (if (inverted) root?.descendingIterator() else root?.iterator()) ?: object: MutableIterator<T> {
         override fun hasNext(): Boolean = false
         override fun next(): T = throw NoSuchElementException()
+        override fun remove() = throw IllegalStateException()
     }
 
-    internal fun descendingIterator(): MutableIterator<T> = (if (inverted) root?.descendingIterator() else root?.iterator()) ?: object: MutableIterator<T> {
-        override fun remove() = throw NoSuchElementException()
+    internal fun descendingIterator(): MutableIterator<T> = (if (inverted) root?.iterator() else root?.descendingIterator()) ?: object: MutableIterator<T> {
         override fun hasNext(): Boolean = false
         override fun next(): T = throw NoSuchElementException()
+        override fun remove() = throw IllegalStateException()
     }
 
     internal fun clear() {
@@ -144,9 +145,23 @@ internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean
 
     private fun splitToThree(element: T): NodeTriple<T> {
         val (lower, eqOrHigher) = split(root, element)
-        val (eq, higher) = split(eqOrHigher, eqOrHigher?.first()?.listNode?.next?.element?.element)
 
-        return NodeTriple(lower, eq, higher)
+        return if (eqOrHigher == null) {
+            NodeTriple(lower, eqOrHigher, null)
+        } else {
+            if (eqOrHigher.first().element.compareTo(element) == 0) {
+                val next: T? = eqOrHigher.first().listNode.next?.element?.element
+                if (next != null) {
+                    val (eq, higher) = split(eqOrHigher, next)
+                    NodeTriple(lower, eq, higher)
+                } else {
+                    NodeTriple(lower, eqOrHigher, null)
+                }
+            } else {
+                NodeTriple(lower, null, eqOrHigher)
+            }
+        }
+
     }
 
     internal fun add(element: T): Boolean {
@@ -172,9 +187,9 @@ internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean
         return eq?.element?.equals(element) == true
     }
 
-    internal fun first(): T? = if (inverted) root?.first()?.element else root?.last()?.element
+    internal fun first(): T? = if (!inverted) root?.first()?.element else root?.last()?.element
 
-    internal fun last(): T? = if (!inverted) root?.first()?.element else root?.last()?.element
+    internal fun last(): T? = if (inverted) root?.first()?.element else root?.last()?.element
 
     internal fun lower(element: T): T? {
         val (lower, _, higher) = splitToThree(element)
