@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import java.util.*
+import kotlin.ConcurrentModificationException
 
 internal class TreeTest {
 
@@ -71,6 +72,19 @@ internal class TreeTest {
         iter3.remove()
         assertThrows(IllegalStateException::class.java) {iter3.remove()}
         assertEquals((1 until 3).iterator().asSequence().toList(), tree.iterator().asSequence().toList())
+    }
+
+    @Test
+    fun `iteratorInvalidation$aytel_hw_main`() {
+        (0 until 10).forEach { i ->
+            tree.add(i)
+        }
+        val iter1 = tree.iterator()
+        val iter2 = tree.iterator()
+        iter1.next()
+        iter1.remove()
+        assertThrows(ConcurrentModificationException::class.java) {iter2.remove()}
+        assertEquals(1, iter1.next())
     }
 
     @Test

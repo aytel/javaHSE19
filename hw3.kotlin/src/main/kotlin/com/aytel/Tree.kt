@@ -1,6 +1,12 @@
 package com.aytel
 
-internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean = false) {
+internal class Tree<T>(val compare: (T, T) -> Int, val inverted: Boolean = false) {
+
+    internal constructor(tree: Tree<T>, inverted: Boolean) : this(tree.compare, inverted) {
+        this.root = tree.root
+        this.lastModification = tree.lastModification
+    }
+
     private operator fun T.compareTo(other: T) = compare(this, other)
 
     private inner class Node(val element: T) {
@@ -133,7 +139,6 @@ internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean
     }
 
     private fun split(node: Node?, value: T): Pair<Node?, Node?> {
-
         if (node == null) {
             return Pair(null, null)
         }
@@ -182,7 +187,7 @@ internal class Tree<T>(val compare: (T, T) -> Int, private val inverted: Boolean
         val (lower, eqOrHigher) = split(root, element)
 
         return if (eqOrHigher == null) {
-            NodeTriple(lower, eqOrHigher, null)
+            NodeTriple(lower, null, null)
         } else {
             if (eqOrHigher.first().element.compareTo(element) == 0) {
                 val next: T? = eqOrHigher.first().listNode.next?.element?.element

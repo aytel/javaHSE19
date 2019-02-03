@@ -6,12 +6,8 @@ class ListNode<T>(internal val element: T) {
 
     internal companion object {
         fun <T>setConnection(first: ListNode<T>?, second: ListNode<T>?) {
-            if ((first == null) or (second == null)) {
-                return
-            } else {
-                first!!.next = second
-                second!!.prev = first
-            }
+            first?.next = second
+            second?.prev = first
         }
     }
 }

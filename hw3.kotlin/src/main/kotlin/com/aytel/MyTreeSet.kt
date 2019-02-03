@@ -7,6 +7,7 @@ import kotlin.NoSuchElementException
 class MyTreeSet<T> private constructor(private val comparator: Comparator<T>, private val tree: Tree<T>) : MutableSet<T> {
 
     constructor(comparator: Comparator<T> = Comparator { a: T, b: T ->
+        @Suppress("UNCHECKED_CAST")
         (a as? Comparable<T>) ?: throw ClassCastException()
         a.compareTo(b)
     }) : this(comparator, Tree({ a: T, b: T -> comparator.compare(a, b)}))
@@ -17,7 +18,7 @@ class MyTreeSet<T> private constructor(private val comparator: Comparator<T>, pr
     override fun contains(element: T): Boolean = tree.contains(element)
 
     override fun containsAll(elements: Collection<T>): Boolean = elements.fold(true) { prev, element ->
-        prev and contains(element)
+        prev.and(contains(element))
     }
 
     override fun isEmpty(): Boolean = size == 0
@@ -26,7 +27,7 @@ class MyTreeSet<T> private constructor(private val comparator: Comparator<T>, pr
 
     fun descendingIterator(): MutableIterator<T> = tree.descendingIterator()
 
-    fun descendingSet(): MyTreeSet<T> = MyTreeSet(comparator, Tree<T>({a, b -> comparator.compare(a, b)}, true))
+    fun descendingSet(): MyTreeSet<T> = MyTreeSet(comparator, Tree(tree, !tree.inverted))
 
     override fun add(element: T): Boolean = tree.add(element)
 
@@ -48,6 +49,7 @@ class MyTreeSet<T> private constructor(private val comparator: Comparator<T>, pr
         val newTreeSet: MyTreeSet<T> = MyTreeSet(comparator)
         newTreeSet.addAll(this)
         newTreeSet.removeAll(elements)
+
         return removeAll(newTreeSet)
     }
 
