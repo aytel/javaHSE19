@@ -1,11 +1,35 @@
 package com.aytel
 
 /** Simple treap with added iterators. */
-internal class Tree<T>(val compare: (T, T) -> Int, val inverted: Boolean = false) {
+internal class Tree<T>(val compare: (T, T) -> Int,
+                       private val inverted: Boolean = false,
+                       descendingTree: Tree<T>? = null) {
 
-    internal constructor(tree: Tree<T>, inverted: Boolean) : this(tree.compare, inverted) {
-        this.root = tree.root
-        this.lastModification = tree.lastModification
+    internal val descendingTree: Tree<T>
+
+    private var lastModification: Int = 0
+        set(value) {
+            field = value
+            if (descendingTree.lastModification != value) {
+                descendingTree.lastModification = value
+            }
+        }
+
+    private var root: Node? = null
+        set(value) {
+            field = value
+            if (descendingTree.root != value) {
+                descendingTree.root = value
+            }
+        }
+
+
+    init {
+        if (descendingTree == null) {
+            this.descendingTree = Tree(compare, !inverted, this)
+        } else {
+            this.descendingTree = descendingTree
+        }
     }
 
     private operator fun T.compareTo(other: T) = compare(this, other)
@@ -153,9 +177,6 @@ internal class Tree<T>(val compare: (T, T) -> Int, val inverted: Boolean = false
             temp.copy(first = node)
         }
     }
-
-    private var lastModification: Int = 0
-    private var root: Node? = null
 
     internal val size: Int
         get() = root?.size ?: 0

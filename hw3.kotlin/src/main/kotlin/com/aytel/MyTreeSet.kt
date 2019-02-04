@@ -43,7 +43,7 @@ class MyTreeSet<T> private constructor(private val comparator: Comparator<T>, pr
     fun descendingIterator(): MutableIterator<T> = tree.descendingIterator()
 
     /** [java.util.TreeSet.descendingSet] */
-    fun descendingSet(): MyTreeSet<T> = MyTreeSet(comparator, Tree(tree, !tree.inverted))
+    fun descendingSet(): MyTreeSet<T> = MyTreeSet(comparator, tree.descendingTree)
 
     /** [kotlin.collections.MutableSet.add] */
     override fun add(element: T): Boolean = tree.add(element)
