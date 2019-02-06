@@ -2,16 +2,22 @@ package com.aytel.cw;
 
 import java.util.*;
 
+
+/**
+ * List of elements, which is optimized for small sizes.
+ */
 public class SmartList<T> extends AbstractList<T> implements List<T> {
 
     private int size;
     private Object elements;
 
+    /** Creates empty list. */
     public SmartList() {
         size = 0;
         elements = null;
     }
 
+    /** Creates list with elements from the given collection. */
     public SmartList(Collection<? extends T> collection) {
         this();
         this.addAll(collection);
@@ -32,11 +38,13 @@ public class SmartList<T> extends AbstractList<T> implements List<T> {
         return ((List<T>)elements).get(index);
     }
 
+    /** {@link List#size()} */
     @Override
     public int size() {
         return size;
     }
 
+    /** {@link List#add(T element)} */
     @Override
     @SuppressWarnings("unchecked")
     public boolean add(T element) {
@@ -51,7 +59,7 @@ public class SmartList<T> extends AbstractList<T> implements List<T> {
             ((Object[])elements)[0] = cur;
             ((Object[])elements)[1] = element;
         }
-        if (size < 5) {
+        if (size >= 2 && size < 5) {
             ((Object[])elements)[size] = element;
         }
         if (size == 5) {
@@ -68,6 +76,7 @@ public class SmartList<T> extends AbstractList<T> implements List<T> {
         return result;
     }
 
+    /** {@link List#remove(Object element)} */
     @Override
     @SuppressWarnings("unchecked")
     public boolean remove(Object element) {
@@ -120,6 +129,7 @@ public class SmartList<T> extends AbstractList<T> implements List<T> {
         return result;
     }
 
+    /** {@link List#contains(Object element)} */
     @Override
     @SuppressWarnings("unchecked")
     public boolean contains(Object element) {
@@ -135,6 +145,7 @@ public class SmartList<T> extends AbstractList<T> implements List<T> {
         return ((List<T>)elements).contains(element);
     }
 
+    /** {@link List#remove(int index)} */
     @Override
     @SuppressWarnings("unchecked")
     public T remove(int index) {
@@ -175,6 +186,29 @@ public class SmartList<T> extends AbstractList<T> implements List<T> {
         }
         ((List<T>) elements).remove(index);
         size--;
+        return value;
+    }
+
+    /** {@link List#set(int index, T element)} */
+    @Override
+    @SuppressWarnings("unchecked")
+    public T set(int index, T element) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        T value = get(index);
+
+        if (size == 1) {
+            elements = element;
+        }
+        if (size >= 2 && size <= 5) {
+            ((T[])elements)[index] = element;
+        }
+        if (size > 5) {
+            ((List<T>)elements).set(index, element);
+        }
+
         return value;
     }
 }
