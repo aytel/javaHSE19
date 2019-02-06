@@ -23,6 +23,7 @@ public class SmartList<T> extends AbstractList<T> implements List<T> {
         this.addAll(collection);
     }
 
+    /** {@link List#get(int index)} */
     @Override
     @SuppressWarnings("unchecked")
     public T get(int index) {
