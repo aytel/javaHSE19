@@ -2,12 +2,23 @@ package com.aytel.cw;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 
 public class SmartListTest {
+
+    @Test
+    public void testFromSelf() {
+        List<Integer> list = newList();
+
+        IntStream.range(0, 10).forEach(list::add);
+
+        List<Integer> same = newList(list);
+        assertEquals(list, same);
+    }
 
     @Test
     public void testSimple() {

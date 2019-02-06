@@ -103,7 +103,7 @@ public class SmartList<T> extends AbstractList<T> implements List<T> {
         }
         if (size <= 5) {
             if (result) {
-                var cur = new ArrayList<T>(Arrays.asList((T[])elements));
+                var cur = new ArrayList<>(Arrays.asList((T[]) elements));
                 (cur).remove(element);
                 elements = cur.toArray();
                 size--;
