@@ -151,9 +151,9 @@ public class Trie {
         private boolean end = false;
         private HashMap<Character, Node> edges = new HashMap<>();
 
-        Node(){}
+        private Node(){}
 
-        Node(InputStream in) throws IOException {
+        private Node(InputStream in) throws IOException {
             int endToInt = in.read();
             int arraySize = in.read();
             var edgesCountArray = new byte[arraySize];
@@ -171,27 +171,27 @@ public class Trie {
             }
         }
 
-        int size() {
+        private int size() {
             return this.size;
         }
 
-        void increaseSize() {
+        private void increaseSize() {
             size++;
         }
 
-        void decreaseSize() {
+        private void decreaseSize() {
             size--;
         }
 
-        Node getNext(Character c) {
+        private Node getNext(Character c) {
             return edges.get(c);
         }
 
-        void setNext(Character c, Node to) {
+        private void setNext(Character c, Node to) {
             edges.put(c, to);
         }
 
-        void serialize(OutputStream out) throws IOException {
+        private void serialize(OutputStream out) throws IOException {
             int endToInt = this.end ? 1 : 0;
             var edgesCount = BigInteger.valueOf(edges.size()).toByteArray();
             int arraySize = edgesCount.length;
