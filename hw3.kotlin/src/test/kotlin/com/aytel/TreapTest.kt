@@ -7,13 +7,13 @@ import org.junit.jupiter.api.BeforeEach
 import java.util.*
 import kotlin.ConcurrentModificationException
 
-internal class TreeTest {
+internal class TreapTest {
 
-    lateinit var tree: Tree<Int>
+    lateinit var tree: Treap<Int>
 
     @BeforeEach
     fun init() {
-        tree = Tree({ a, b -> a - b})
+        tree = Treap({ a, b -> a - b})
     }
 
     @Test

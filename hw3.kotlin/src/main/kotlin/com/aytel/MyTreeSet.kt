@@ -1,25 +1,23 @@
 package com.aytel
 
 import java.lang.ClassCastException
-import java.util.*
 import kotlin.Comparator
-import kotlin.NoSuchElementException
 
 /**
- * Implements [kotlin.collections.MutableSet] interface with internal [Tree], which is simple treap.
+ * Implements [kotlin.collections.MutableSet] interface with internal [Treap], which is simple treap.
  * Compares all elements using natural order or with comparator, given in the constructor.
  * All methods can throw [kotlin.ClassCastException] in case types are not comparable.
  *
- * @constructor Creates MyTreeSet with given comparator and given internal [Tree].
+ * @constructor Creates MyTreeSet with given comparator and given internal [Treap].
  */
-class MyTreeSet<T> private constructor(private val comparator: Comparator<T>, private val tree: Tree<T>) : MutableSet<T> {
+class MyTreeSet<T> private constructor(private val comparator: Comparator<T>, private val tree: Treap<T>) : MutableSet<T> {
 
     /** Creates empty MyTreeSet with given comparator or with default in case it was called without arguments. */
     constructor(comparator: Comparator<T> = Comparator { a: T, b: T ->
         @Suppress("UNCHECKED_CAST")
         (a as? Comparable<T>) ?: throw ClassCastException()
         a.compareTo(b)
-    }) : this(comparator, Tree({ a: T, b: T -> comparator.compare(a, b)}))
+    }) : this(comparator, Treap(comparator::compare))
 
     /** [kotlin.collections.MutableSet.size] */
     override val size: Int
@@ -39,10 +37,10 @@ class MyTreeSet<T> private constructor(private val comparator: Comparator<T>, pr
     /** [kotlin.collections.MutableSet.iterator] */
     override fun iterator(): MutableIterator<T> = tree.iterator()
 
-    /** [java.util.TreeSet.descendingIterator] */
+    /** There is no such method in [kotlin.collections.MutableSet], so it implements [java.util.TreeSet.descendingIterator]. */
     fun descendingIterator(): MutableIterator<T> = tree.descendingIterator()
 
-    /** [java.util.TreeSet.descendingSet] */
+    /** There is no such method in [kotlin.collections.MutableSet], so it implements [java.util.TreeSet.descendingSet]. */
     fun descendingSet(): MyTreeSet<T> = MyTreeSet(comparator, tree.descendingTree)
 
     /** [kotlin.collections.MutableSet.add] */
@@ -81,16 +79,16 @@ class MyTreeSet<T> private constructor(private val comparator: Comparator<T>, pr
     /** [kotlin.collections.MutableSet.last] */
     fun last(): T? = tree.last()
 
-    /** [java.util.TreeSet.lower] */
+    /** There is no such method in [kotlin.collections.MutableSet], so it implements [java.util.TreeSet.lower]. */
     fun lower(element: T): T? = tree.lower(element)
 
-    /** [java.util.TreeSet.higher] */
+    /** There is no such method in [kotlin.collections.MutableSet], so it implements [java.util.TreeSet.higher]. */
     fun higher(element: T): T? = tree.higher(element)
 
-    /** [java.util.TreeSet.floor] */
+    /** There is no such method in [kotlin.collections.MutableSet], so it implements [java.util.TreeSet.floor]. */
     fun floor(element: T): T? = tree.floor(element)
 
-    /** [java.util.TreeSet.ceiling] */
+    /** There is no such method in [kotlin.collections.MutableSet], so it implements [java.util.TreeSet.ceiling]. */
     fun ceiling(element: T): T? = tree.ceiling(element)
 
 }
