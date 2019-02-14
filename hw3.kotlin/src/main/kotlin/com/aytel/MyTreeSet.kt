@@ -4,7 +4,7 @@ import java.lang.ClassCastException
 import kotlin.Comparator
 
 /**
- * Implements [kotlin.collections.MutableSet] interface with internal [Treap], which is simple treap.
+ * Implements [kotlin.collections.MutableSet] interface with internal [Treap].
  * Compares all elements using natural order or with comparator, given in the constructor.
  * All methods can throw [kotlin.ClassCastException] in case types are not comparable.
  *
