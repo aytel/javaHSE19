@@ -1,6 +1,4 @@
-/*/.idea/workspace.xml
-/*/.idea/uiDesigner.xml
-/*/.gradle/
-/*/build/
-/*/out/
-/*/javadoc/
+*/.idea/
+*/.gradle/
+*/build/
+*/out/
