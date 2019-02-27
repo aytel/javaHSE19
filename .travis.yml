@@ -1,4 +1,4 @@
 language: java
 jdk: oraclejdk11
 services: mongodb
-script: cd ./hw4.java && ./gradlew build
+script: cd ./hw4.java && ./gradlew check
