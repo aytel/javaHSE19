@@ -1,11 +1,12 @@
 package com.aytel;
 
+import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 import xyz.morphia.annotations.*;
 
 @Entity
 public class Ownership {
-
+    @Id private ObjectId id;
     @Indexed @NotNull String name, number;
 
     private Ownership() {
@@ -13,7 +14,7 @@ public class Ownership {
         this.number = "88005553535";
     }
 
-    public Ownership(@NotNull String name, @NotNull String number) {
+    Ownership(@NotNull String name, @NotNull String number) {
         this.name = name;
         this.number = number;
     }

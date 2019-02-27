@@ -21,7 +21,7 @@ public class Main {
             "7 - print all ownerships";
 
     private static String read(@NotNull String valueToRead) {
-        System.out.print("Print " + valueToRead);
+        System.out.println("Print " + valueToRead + ":");
         return inputScanner.next();
     }
 
@@ -38,7 +38,7 @@ public class Main {
             String query = null;
             int queryType;
             try {
-                query = read("");
+                query = read("next command");
                 queryType = Integer.parseInt(query);
             } catch (NumberFormatException e) {
                 if (query == null || !query.equals("--help")) {
@@ -90,7 +90,7 @@ public class Main {
     private static void add() {
         String name = read("name");
         String number = read("number");
-        System.out.println(phoneBook.add(name, number) ? "Ok, added\n" : "Already added to phonebook.");
+        System.out.println(!phoneBook.add(name, number) ? "Ok, added\n" : "Already added to phonebook.");
     }
 
     private static void remove() {
