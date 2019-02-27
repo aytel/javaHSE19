@@ -23,6 +23,9 @@ class PhoneBookTest {
 
     @Test
     void remove() {
+        assertFalse(phoneBook.remove("a", "10"));
+        phoneBook.add("a", "10");
+        assertTrue(phoneBook.remove("a", "10"));
     }
 
     @Test
