@@ -36,7 +36,7 @@ class PhoneBook {
     boolean add(@NotNull String name, @NotNull String number) {
         final var ownership = new Ownership(name, number);
         if (contains(ownership)) {
-            return false;
+            return true;
         }
         datastore.save(ownership);
         return false;
