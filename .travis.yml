@@ -1,0 +1,4 @@
+language: java
+os: linux
+jdk: oraclejdk11
+script: cd ./hw1 && ./gradlew check
