@@ -4,6 +4,10 @@ import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 import xyz.morphia.annotations.*;
 
+
+/** Simple class, containing name of owner and his phone number.
+ * Both name and number must be not null.
+ */
 @Entity
 public class Ownership {
     @Id private ObjectId id;
@@ -22,5 +26,14 @@ public class Ownership {
     @Override
     public String toString() {
         return "(" + name + ": " + number + ")";
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof Ownership) {
+            Ownership ownership = (Ownership) other;
+            return name.equals(ownership.name) && number.equals(ownership.number);
+        }
+        return false;
     }
 }
