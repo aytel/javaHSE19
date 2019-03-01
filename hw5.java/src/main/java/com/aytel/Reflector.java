@@ -58,10 +58,10 @@ public class Reflector {
             printModifiers(constructor.getModifiers());
             printGenericType(constructor.getTypeParameters());
             writer.write(constructor.getName());
-            writer.write("(" + Arrays.
-                    stream(constructor.getGenericParameterTypes()).
-                    map(Type::getTypeName).
-                    collect(Collectors.joining(", ")) + "){}\n");
+            writer.write("(" + Arrays
+                    .stream(constructor.getParameters())
+                    .map((Parameter parameter) -> parameter.getParameterizedType().getTypeName() + " " + parameter.getName())
+                    .collect(Collectors.joining(", ")) + "){}\n");
         }
     }
 
@@ -79,10 +79,10 @@ public class Reflector {
             printTabs();
             printModifiers(method.getModifiers());
             printGenericType(method.getTypeParameters());
-            writer.write(method.getGenericReturnType() + " " + method.getName());
+            writer.write(method.getGenericReturnType().getTypeName() + " " + method.getName());
             writer.write("(" + Arrays
-                    .stream(method.getGenericParameterTypes())
-                    .map(Type::getTypeName)
+                    .stream(method.getParameters())
+                    .map((Parameter parameter) -> parameter.getParameterizedType().getTypeName() + " " + parameter.getName())
                     .collect(Collectors.joining(", ")) + ")");
             if (method.getReturnType().isPrimitive()) {
                 writer.write("{ return " + getInstanceOfPrimitive(method.getReturnType()).toString() + "; }\n");
@@ -133,9 +133,6 @@ public class Reflector {
     }
 
     private static void printModifiers(int modifiers) throws IOException {
-        if (Modifier.isStatic(modifiers)) {
-            writer.write("static ");
-        }
         if (Modifier.isPrivate(modifiers)) {
             writer.write("private ");
         }
@@ -144,6 +141,9 @@ public class Reflector {
         }
         if (Modifier.isPublic(modifiers)) {
             writer.write("public ");
+        }
+        if (Modifier.isStatic(modifiers)) {
+            writer.write("static ");
         }
     }
 

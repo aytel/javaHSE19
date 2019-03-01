@@ -41,6 +41,8 @@ class ReflectorTest {
     void dumb() throws IOException {
         Class<?> someClass = Dumb.class;
 
+        Reflector.printStructure(Reflector.class);
+
         Reflector.printStructure(someClass);
 
         TypeVariable[] types = someClass.getTypeParameters();
