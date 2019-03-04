@@ -6,14 +6,24 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
+    private @NotNull Comparator<? super T> comparator;
 
-    private @NotNull Comparator<T> comparator;
+    /** Keeps root, index of last modification and random. Common for this and descendingTreap. */
     private @NotNull InfoStorage infoStorage;
+
+    /** Same treap, but with reversed order. */
     private @NotNull JTreap<T> descendingTreap;
+
+    /** Iterator of empty treap. */
     private @NotNull EmptyIterator<T> emptyIterator = new EmptyIterator<>();
+
+    /** Is this treap descending or not. */
     private boolean inverted;
 
-    private JTreap(@NotNull Comparator<T> comparator,
+    private enum IteratorDirection {FORWARD, BACKWARD};
+
+    /** Used only to create paired descending treap to treap created by user. */
+    private JTreap(@NotNull Comparator<? super T> comparator,
                    @NotNull InfoStorage infoStorage,
                    @NotNull JTreap<T> descendingTreap) {
         this.comparator = comparator;
@@ -22,6 +32,7 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
         this.inverted = true;
     }
 
+    /** Creates empty treap with given comparator. */
     public JTreap(@NotNull Comparator<T> comparator) {
         this.comparator = comparator;
         this.infoStorage = new InfoStorage();
@@ -29,11 +40,14 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
         this.descendingTreap = new JTreap<>(comparator, infoStorage, this);
     }
 
+    /** Creates empty treap assuming T is comparable.
+     * Otherwise all methods can throw {@link java.lang.ClassCastException}.
+     */
     public JTreap() {
-        comparator = (T a, T b) -> ((Comparable<T>)a).compareTo(b);
+        comparator = (T a, T b) -> ((Comparable<? super T>)a).compareTo(b);
         this.infoStorage = new InfoStorage();
         this.inverted = false;
-        this.descendingTreap = new JTreap<>(comparator, infoStorage, this);
+        this.descendingTreap = new JTreap<T>(comparator, infoStorage, this);
     }
 
     @NotNull
@@ -63,7 +77,7 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
         if (infoStorage.root == null) {
             return null;
         } else {
-            return (inverted ? infoStorage.root.first().value : infoStorage.root.last().value);
+            return (!inverted ? infoStorage.root.first().value : infoStorage.root.last().value);
         }
     }
 
@@ -87,7 +101,7 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
         if (contains(element)) {
             return element;
         } else {
-            return higher(element);
+            return lower(element);
         }
     }
 
@@ -115,14 +129,14 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
         if (infoStorage.root == null) {
             return false;
         } else {
-            return infoStorage.root.contains((T)element);
+            return infoStorage.root.contains((T) element);
         }
     }
 
     @Override
     public boolean add(@NotNull T element) {
         if (contains(element)) {
-            return true;
+            return false;
         }
 
         NodeTriple nodeTriple = splitToThree(element);
@@ -134,7 +148,7 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
                 (nodeTriple.higher != null ? nodeTriple.higher.first().jListNode : null));
 
         infoStorage.setRoot(nodeTriple.merge());
-        return false;
+        return true;
     }
 
     @Override
@@ -170,8 +184,8 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
         }
     }
 
-    private boolean chooseTop(@NotNull Node first, @NotNull Node second) {
-        int randomValue = (new Random()).nextInt();
+    private boolean isFirstTop(@NotNull Node first, @NotNull Node second) {
+        int randomValue = infoStorage.random.nextInt();
         randomValue %= first.size + second.size;
         return randomValue < first.size;
     }
@@ -184,7 +198,7 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
         if (second == null) {
             return first;
         }
-        if (chooseTop(first, second)) {
+        if (isFirstTop(first, second)) {
             first.setRight(merge(first.right, second));
             return first;
         } else {
@@ -201,12 +215,10 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
             return new NodeTriple(nodePair.lower, null, null);
         } else {
             if (comparator.compare(nodePair.equalOrHigher.first().value, element) == 0) {
-                T next;
                 if (nodePair.equalOrHigher.first().jListNode.next == null) {
-                    next = null;
                     return new NodeTriple(nodePair.lower, nodePair.equalOrHigher, null);
                 } else {
-                    next = nodePair.equalOrHigher.first().jListNode.next.element.value;
+                    T next = nodePair.equalOrHigher.first().jListNode.next.element.value;
                     NodePair equalOrHigher = split(nodePair.equalOrHigher, next);
                     return new NodeTriple(nodePair.lower, equalOrHigher.lower, equalOrHigher.equalOrHigher);
                 }
@@ -219,6 +231,7 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
     private class InfoStorage {
         int lastModification = 0;
         Node root = null;
+        Random random = new Random();
 
         void setRoot(Node value) {
             root = value;
@@ -272,22 +285,22 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
 
         @NotNull
         Iterator<T> iterator() {
-            return new baseIterator(false);
+            return new BaseIterator(IteratorDirection.FORWARD);
         }
 
         @NotNull
         Iterator<T> descendingIterator() {
-            return new baseIterator(true);
+            return new BaseIterator(IteratorDirection.BACKWARD);
         }
 
-        class baseIterator implements Iterator<T> {
+        class BaseIterator implements Iterator<T> {
             int modificationIndex = infoStorage.lastModification;
             Node current, previous = null;
-            boolean direction;
+            IteratorDirection direction;
 
-            baseIterator(boolean direction) {
+            BaseIterator(IteratorDirection direction) {
                 this.direction = direction;
-                current = (!direction ? first() : last());
+                current = (direction == IteratorDirection.FORWARD ? first() : last());
             }
 
             @NotNull
@@ -303,7 +316,7 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
                     T returnValue = current.value;
                     previous = current;
                     JListNode<Node> nextJListNode;
-                    if (!direction) {
+                    if (direction == IteratorDirection.FORWARD) {
                         nextJListNode = current.jListNode.next;
                     } else {
                         nextJListNode = current.jListNode.previous;
@@ -340,7 +353,6 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
                 }
             }
         }
-
     }
 
     private class NodePair {
@@ -380,6 +392,24 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
         @Override
         public void remove() {
             throw new IllegalStateException();
+        }
+    }
+
+    static class JListNode<T> {
+        final T element;
+        JListNode<T> next = null, previous = null;
+
+        JListNode(@NotNull T element) {
+            this.element = element;
+        }
+
+        static <T>void setConnection(JListNode<T> first, JListNode<T> second) {
+            if (first != null) {
+                first.next = second;
+            }
+            if (second != null) {
+                second.previous = first;
+            }
         }
     }
 }

@@ -10,8 +10,7 @@ import java.util.stream.IntStream;
 import com.google.common.collect.Lists;
 
 class JTreapTest {
-
-    JTreap<Integer> treap;
+    private JTreap<Integer> treap;
 
     @BeforeEach
     void init() {
@@ -70,9 +69,9 @@ class JTreapTest {
 
     @Test
     void add() {
+        assertTrue(treap.add(1));
         assertFalse(treap.add(1));
-        assertTrue(treap.add(1));
-        assertTrue(treap.add(1));
+        assertFalse(treap.add(1));
     }
 
     @Test
@@ -80,5 +79,23 @@ class JTreapTest {
         assertFalse(treap.remove(1));
         treap.add(1);
         assertTrue(treap.remove(1));
+    }
+
+    @Test
+    void comparator() {
+        JTreap<Object> jTreapWithDefaultComparator = new JTreap<>();
+        jTreapWithDefaultComparator.add(0);
+        jTreapWithDefaultComparator.add(1);
+        assertThrows(ClassCastException.class, () -> jTreapWithDefaultComparator.add(""));
+        jTreapWithDefaultComparator.add(10);
+        assertEquals(10, jTreapWithDefaultComparator.higher(5));
+        assertEquals(0, jTreapWithDefaultComparator.descendingSet().last());
+
+        JTreap<String> jTreapWithCustomComparator = new JTreap<>(Comparator.comparingInt(String::length));
+        jTreapWithCustomComparator.add("0");
+        jTreapWithCustomComparator.add("1");
+        assertEquals(1, jTreapWithCustomComparator.size());
+        assertEquals("0", jTreapWithCustomComparator.ceiling(""));
+
     }
 }
