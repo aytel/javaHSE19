@@ -14,6 +14,7 @@ public class Reflector {
 
     public static void printStructure(@NotNull Class<?> someClass) throws IOException {
         writer = new FileWriter("outputs/" + someClass.getName() + ".java", false);
+        writer.write("package " + someClass.getPackageName() + ";\n\n");
         printClass(someClass);
         writer.close();
     }
@@ -57,7 +58,7 @@ public class Reflector {
             printTabs();
             printModifiers(constructor.getModifiers());
             printGenericType(constructor.getTypeParameters());
-            writer.write(constructor.getName());
+            writer.write(someClass.getSimpleName());
             writer.write("(" + Arrays
                     .stream(constructor.getParameters())
                     .map((Parameter parameter) -> parameter.getParameterizedType().getTypeName() + " " + parameter.getName())
@@ -84,20 +85,18 @@ public class Reflector {
                     .stream(method.getParameters())
                     .map((Parameter parameter) -> parameter.getParameterizedType().getTypeName() + " " + parameter.getName())
                     .collect(Collectors.joining(", ")) + ")");
-            if (method.getReturnType().isPrimitive()) {
-                writer.write("{ return " + getInstanceOfPrimitive(method.getReturnType()).toString() + "; }\n");
-            } else {
-                writer.write("{ return null; }\n");
-            }
+            writer.write("{ throw new UnsupportedOperationException(); }\n");
         }
     }
 
     private static Object getInstanceOfPrimitive(Class<?> returnType) {
         if (returnType == Boolean.TYPE) {
             return Boolean.valueOf("false");
-        } else {
-            return Integer.valueOf("0");
         }
+        if (returnType == void.class) {
+            return "";
+        }
+        return Integer.valueOf("0");
     }
 
     private static void printFields(Class<?> someClass) throws IOException {
@@ -152,6 +151,4 @@ public class Reflector {
             writer.write(" ");
         }
     }
-
-
 }
