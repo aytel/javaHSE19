@@ -1,6 +1,7 @@
 package com.aytel;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class Injector {
@@ -20,7 +21,7 @@ public class Injector {
             }
         }
         Class<?> clazz = Class.forName(rootClassName);
-        if (clazz.isInterface()) {
+        if (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) {
             clazz = findImplementation(clazz, implementationClasses);
         }
         used.put(rootClassName, null);
