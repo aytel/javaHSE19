@@ -21,7 +21,7 @@ public class Injector {
         }
         Class<?> clazz = Class.forName(rootClassName);
         if (clazz.isInterface()) {
-            clazz = findImplemetation(clazz, implementationClasses);
+            clazz = findImplementation(clazz, implementationClasses);
         }
         used.put(rootClassName, null);
 
@@ -35,7 +35,7 @@ public class Injector {
         return used.get(rootClassName);
     }
 
-    private static Class<?> findImplemetation(Class<?> clazz, List<Class<?>> implementationClasses) throws AmbiguousImplementationException, ImplementationNotFoundException {
+    private static Class<?> findImplementation(Class<?> clazz, List<Class<?>> implementationClasses) throws AmbiguousImplementationException, ImplementationNotFoundException {
         Class<?> returnClass = null;
         for (Class<?> candidate: implementationClasses) {
             if (clazz.isAssignableFrom(candidate)) {

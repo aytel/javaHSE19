@@ -1,27 +1,25 @@
 package com.aytel;
 
+import com.aytel.testClasses.*;
 import org.junit.jupiter.api.Test;
-import com.aytel.testClasses.ClassWithOneClassDependency;
-import com.aytel.testClasses.ClassWithOneInterfaceDependency;
-import com.aytel.testClasses.ClassWithoutDependencies;
-import com.aytel.testClasses.InterfaceImpl;
 
+import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
-public class InjectorTest {
+class InjectorTest {
 
     @Test
-    public void injectorShouldInitializeClassWithoutDependencies()
+    void injectorShouldInitializeClassWithoutDependencies()
             throws Exception {
         Object object = Injector.initialize("com.aytel.testClasses.ClassWithoutDependencies", Collections.emptyList());
         assertTrue(object instanceof ClassWithoutDependencies);
     }
 
     @Test
-    public void injectorShouldInitializeClassWithOneClassDependency()
+    void injectorShouldInitializeClassWithOneClassDependency()
             throws Exception {
         Object object = Injector.initialize(
                 "com.aytel.testClasses.ClassWithOneClassDependency",
@@ -29,11 +27,11 @@ public class InjectorTest {
         );
         assertTrue(object instanceof ClassWithOneClassDependency);
         ClassWithOneClassDependency instance = (ClassWithOneClassDependency) object;
-        assertTrue(instance.dependency != null);
+        assertNotNull(instance.dependency);
     }
 
     @Test
-    public void injectorShouldInitializeClassWithOneInterfaceDependency()
+    void injectorShouldInitializeClassWithOneInterfaceDependency()
             throws Exception {
         Object object = Injector.initialize(
                 "com.aytel.testClasses.ClassWithOneInterfaceDependency",
@@ -42,5 +40,35 @@ public class InjectorTest {
         assertTrue(object instanceof ClassWithOneInterfaceDependency);
         ClassWithOneInterfaceDependency instance = (ClassWithOneInterfaceDependency) object;
         assertTrue(instance.dependency instanceof InterfaceImpl);
+    }
+
+    @Test
+    void injectorShouldThrowImplementationNotFoundException() {
+        assertThrows(ImplementationNotFoundException.class,
+                () -> Injector.initialize("com.aytel.testClasses.ClassWithOneInterfaceDependency",
+                        Collections.emptyList()));
+    }
+
+    @Test
+    void injectorShouldThrowAmbiguousImplementationException() {
+        assertThrows(AmbiguousImplementationException.class,
+                () -> Injector.initialize("com.aytel.testClasses.ClassWithOneInterfaceDependency",
+                        Arrays.asList(Interface.class, InterfaceImpl.class)));
+    }
+
+    @Test
+    void injectorShouldThrowInjectionCycleException() {
+        assertThrows(InjectionCycleException.class,
+                () -> Injector.initialize("com.aytel.testClasses.ClassAWithBDependency",
+                        Collections.singletonList(ClassBWithADependency.class)));
+    }
+
+    @Test
+    void injectorShouldCreateOnlyOneInstance() throws Exception {
+        Injector.initialize("com.aytel.testClasses.ClassWithTwoDependecies",
+                Arrays.asList(FirstClassExtendsCounter.class,
+                        SecondClassExtendsCounter.class,
+                        Counter.class));
+        assertEquals(1, Counter.counter);
     }
 }
