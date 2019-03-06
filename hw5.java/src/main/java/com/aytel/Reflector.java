@@ -19,11 +19,25 @@ public class Reflector {
         writer.close();
     }
 
+    public static void diffClasses(@NotNull Class<?> firstClass, @NotNull Class<?> secondClass) {
+        System.out.println("Only in first: \n");
+        System.out.println("Methods: \n");
+        printMethodsOnlyInFirst(firstClass, secondClass);
+        System.out.println("Fields: \n");
+        printFieldOnlyInFirst(firstClass, secondClass);
+
+        System.out.println("Only in second: \n");
+        System.out.println("Methods: \n");
+        printMethodsOnlyInFirst(secondClass, firstClass);
+        System.out.println("Fields: \n");
+        printFieldOnlyInFirst(secondClass, firstClass);
+    }
+
     private static void printClass(Class<?> someClass) throws IOException {
         printTabs();
-        printModifiers(someClass.getModifiers());
+        writer.write(modifiersToString(someClass.getModifiers()));
         writer.write("class " + someClass.getSimpleName());
-        printGenericType(someClass.getTypeParameters());
+        writer.write(genericTypeToString(someClass.getTypeParameters()));
         printSuperclasses(someClass);
         writer.write(" {\n");
         tabs += tabsOffset;
@@ -56,13 +70,7 @@ public class Reflector {
                 continue;
             }
             printTabs();
-            printModifiers(constructor.getModifiers());
-            printGenericType(constructor.getTypeParameters());
-            writer.write(someClass.getSimpleName());
-            writer.write("(" + Arrays
-                    .stream(constructor.getParameters())
-                    .map((Parameter parameter) -> parameter.getParameterizedType().getTypeName() + " " + parameter.getName())
-                    .collect(Collectors.joining(", ")) + "){}\n");
+            writer.write(constructorToString(constructor, someClass));
         }
     }
 
@@ -78,25 +86,9 @@ public class Reflector {
                 continue;
             }
             printTabs();
-            printModifiers(method.getModifiers());
-            printGenericType(method.getTypeParameters());
-            writer.write(method.getGenericReturnType().getTypeName() + " " + method.getName());
-            writer.write("(" + Arrays
-                    .stream(method.getParameters())
-                    .map((Parameter parameter) -> parameter.getParameterizedType().getTypeName() + " " + parameter.getName())
-                    .collect(Collectors.joining(", ")) + ")");
+            writer.write(methodToString(method));
             writer.write("{ throw new UnsupportedOperationException(); }\n");
         }
-    }
-
-    private static Object getInstanceOfPrimitive(Class<?> returnType) {
-        if (returnType == Boolean.TYPE) {
-            return Boolean.valueOf("false");
-        }
-        if (returnType == void.class) {
-            return "";
-        }
-        return Integer.valueOf("0");
     }
 
     private static void printFields(Class<?> someClass) throws IOException {
@@ -105,7 +97,7 @@ public class Reflector {
                 continue;
             }
             printTabs();
-            printModifiers(field.getModifiers());
+            writer.write(modifiersToString(field.getModifiers()));
             writer.write(field.getGenericType().getTypeName() + " " + field.getName() + ";\n");
         }
     }
@@ -120,35 +112,96 @@ public class Reflector {
         return builder.toString();
     }
 
-    private static void printGenericType(TypeVariable[] parameters) throws IOException {
+    private static String genericTypeToString(TypeVariable[] parameters) {
+        StringBuilder stringBuilder = new StringBuilder();
         if (parameters.length != 0) {
-            writer.write("<");
-            writer.write(Arrays
+            stringBuilder.append("<");
+            stringBuilder.append(Arrays
                     .stream(parameters)
                     .map(Reflector::boundedGenericTypeToString)
                     .collect(Collectors.joining(", ")));
-            writer.write(">");
+            stringBuilder.append(">");
         }
+        return stringBuilder.toString();
     }
 
-    private static void printModifiers(int modifiers) throws IOException {
+    private static String modifiersToString(int modifiers)  {
+        StringBuilder stringBuilder = new StringBuilder();
         if (Modifier.isPrivate(modifiers)) {
-            writer.write("private ");
+            stringBuilder.append("private ");
         }
         if (Modifier.isProtected(modifiers)) {
-            writer.write("protected ");
+            stringBuilder.append("protected ");
         }
         if (Modifier.isPublic(modifiers)) {
-            writer.write("public ");
+            stringBuilder.append("public ");
         }
         if (Modifier.isStatic(modifiers)) {
-            writer.write("static ");
+            stringBuilder.append("static ");
         }
+        return stringBuilder.toString();
     }
 
     private static void printTabs() throws IOException {
         for (int i = 0; i < tabs; i++) {
             writer.write(" ");
         }
+    }
+
+    private static String methodToString(Method method) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(modifiersToString(method.getModifiers()));
+        stringBuilder.append(genericTypeToString(method.getTypeParameters()));
+        stringBuilder.append(method.getGenericReturnType().getTypeName()).append(" ").append(method.getName()).append(" ");
+        stringBuilder.append("(").append(Arrays
+                .stream(method.getParameters())
+                .map((Parameter parameter) -> {
+                    if (parameter.isVarArgs()) {
+                        String typeName = parameter.getParameterizedType().getTypeName();
+                        typeName = typeName.substring(0, typeName.length() - 2) + "...";
+                        return typeName + " " + parameter.getName();
+                    } else {
+                        return parameter.getParameterizedType().getTypeName() + " " + parameter.getName();
+                    }
+                })
+                .collect(Collectors.joining(", "))).append(")");
+        return stringBuilder.toString();
+    }
+
+    private static String constructorToString(Constructor constructor, Class<?> someClass) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(modifiersToString(constructor.getModifiers()));
+        stringBuilder.append(genericTypeToString(constructor.getTypeParameters()));
+        stringBuilder.append(someClass.getSimpleName());
+        stringBuilder.append("(").append(Arrays
+                .stream(constructor.getParameters())
+                .map((Parameter parameter) -> {
+                    if (parameter.isVarArgs()) {
+                        String typeName = parameter.getParameterizedType().getTypeName();
+                        typeName = typeName.substring(0, typeName.length() - 2) + "...";
+                        return typeName + " " + parameter.getName();
+                    } else {
+                        return parameter.getParameterizedType().getTypeName() + " " + parameter.getName();
+                    }
+                })
+                .collect(Collectors.joining(", "))).append("){}\n");
+        return stringBuilder.toString();
+    }
+
+    private static boolean methodsEqual(Method firstMethod, Method secondMethod) {
+        return methodToString(firstMethod).equals(methodToString(secondMethod));
+    }
+
+    private static void printMethodsOnlyInFirst(Class<?> firstClass, Class<?> secondClass) {
+        for (Method firstMethod: firstClass.getDeclaredMethods()) {
+            if (Arrays
+                    .stream(secondClass.getDeclaredMethods())
+                    .anyMatch((Method secondMethod) -> methodsEqual(firstMethod, secondMethod))) {
+                System.out.println(methodToString(firstMethod) + "\n");
+            }
+        }
+    }
+
+    private static void printFieldOnlyInFirst(Class<?> secondClass, Class<?> firstClass) {
     }
 }
