@@ -1,4 +1,4 @@
 language: java
 os: linux
 jdk: oraclejdk11
-script: cd ./hw4.java && ./gradlew check
+script: cd ./hw5.java && ./gradlew check
