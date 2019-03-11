@@ -18,7 +18,7 @@ public class Reflector {
                 + "/outputs/"
                 + someClass.getSimpleName()
                 + ".java", false);
-        writer.write("package " + someClass.getPackageName() + ";\n\n");
+        writer.write("package " + someClass.getPackageName() + ".outputs" + ";\n\n");
         printClass(someClass);
         writer.close();
     }
