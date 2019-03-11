@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.GenericDeclaration;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.sql.Ref;
 import java.util.AbstractList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ class Dumb<T extends Integer, K, G extends String & List> extends DDumb<Integer>
     int x;
     Integer[] vals;
     String[][] s;
-    <Q> int kek(Q q, List<? super List<? extends K>> v) {
+    <Q> int kek(Q[] q, List<? super List<? extends K>> v) {
 
         return 0;
     }
@@ -80,6 +81,11 @@ class ReflectorTest {
                 System.out.println(type.getTypeName());
             }*/
         }
+    }
+
+    @Test
+    void dumbDiff() {
+        Reflector.diffClasses(Integer.class, Integer.class);
     }
 
 }

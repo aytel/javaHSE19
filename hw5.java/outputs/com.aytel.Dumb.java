@@ -13,8 +13,8 @@ class Dumb<T extends java.lang.Integer, K extends java.lang.Object, G extends ja
     protected T[] aaa;
     public int compareTo (java.lang.Object arg0){ throw new UnsupportedOperationException(); }
     private void superOf (T... arg0){ throw new UnsupportedOperationException(); }
+    <Q extends java.lang.Object>int kek (Q[] arg0, java.util.List<? super java.util.List<? extends K>> arg1){ throw new UnsupportedOperationException(); }
     static java.lang.Integer sus (java.util.List<?>... arg0){ throw new UnsupportedOperationException(); }
-    <Q extends java.lang.Object>int kek (Q arg0, java.util.List<? super java.util.List<? extends K>> arg1){ throw new UnsupportedOperationException(); }
     class meme<E extends K, F extends java.lang.Object> {
         meme(com.aytel.Dumb arg0){}
         int a;

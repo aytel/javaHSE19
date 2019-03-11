@@ -13,24 +13,36 @@ public class Reflector {
     private static final int tabsOffset = 4;
 
     public static void printStructure(@NotNull Class<?> someClass) throws IOException {
-        writer = new FileWriter("outputs/" + someClass.getName() + ".java", false);
+        writer = new FileWriter("src/test/java/"
+                + someClass.getPackageName().replace('.', '/')
+                + "/outputs/"
+                + someClass.getSimpleName()
+                + ".java", false);
         writer.write("package " + someClass.getPackageName() + ";\n\n");
         printClass(someClass);
         writer.close();
     }
 
-    public static void diffClasses(@NotNull Class<?> firstClass, @NotNull Class<?> secondClass) {
-        System.out.println("Only in first: \n");
-        System.out.println("Methods: \n");
+    static void diffClassesToCustomOutput(Class<?> firstClass, Class<?> secondClass, PrintStream printStream) {
+        printStream.println("Only in first: \n");
+        printStream.println("Methods: \n");
         printMethodsOnlyInFirst(firstClass, secondClass);
-        System.out.println("Fields: \n");
-        printFieldOnlyInFirst(firstClass, secondClass);
+        printStream.println();
+        printStream.println("Fields: \n");
+        printFieldsOnlyInFirst(firstClass, secondClass);
+        printStream.println();
 
-        System.out.println("Only in second: \n");
-        System.out.println("Methods: \n");
+        printStream.println("Only in second: \n");
+        printStream.println("Methods: \n");
         printMethodsOnlyInFirst(secondClass, firstClass);
-        System.out.println("Fields: \n");
-        printFieldOnlyInFirst(secondClass, firstClass);
+        printStream.println();
+        printStream.println("Fields: \n");
+        printFieldsOnlyInFirst(secondClass, firstClass);
+        printStream.println();
+    }
+
+    public static void diffClasses(@NotNull Class<?> firstClass, @NotNull Class<?> secondClass) {
+        diffClassesToCustomOutput(firstClass, secondClass, System.out);
     }
 
     private static void printClass(Class<?> someClass) throws IOException {
@@ -97,8 +109,7 @@ public class Reflector {
                 continue;
             }
             printTabs();
-            writer.write(modifiersToString(field.getModifiers()));
-            writer.write(field.getGenericType().getTypeName() + " " + field.getName() + ";\n");
+            writer.write(fieldToString(field) + ";\n");
         }
     }
 
@@ -188,6 +199,10 @@ public class Reflector {
         return stringBuilder.toString();
     }
 
+    private static String fieldToString(Field field) {
+        return modifiersToString(field.getModifiers()) + field.getGenericType().getTypeName() + " " + field.getName();
+    }
+
     private static boolean methodsEqual(Method firstMethod, Method secondMethod) {
         return methodToString(firstMethod).equals(methodToString(secondMethod));
     }
@@ -196,12 +211,23 @@ public class Reflector {
         for (Method firstMethod: firstClass.getDeclaredMethods()) {
             if (Arrays
                     .stream(secondClass.getDeclaredMethods())
-                    .anyMatch((Method secondMethod) -> methodsEqual(firstMethod, secondMethod))) {
-                System.out.println(methodToString(firstMethod) + "\n");
+                    .noneMatch((Method secondMethod) -> methodsEqual(firstMethod, secondMethod))) {
+                System.out.println(methodToString(firstMethod));
             }
         }
     }
 
-    private static void printFieldOnlyInFirst(Class<?> secondClass, Class<?> firstClass) {
+    private static boolean fieldsEqual(Field firstField, Field secondField) {
+        return fieldToString(firstField).equals(fieldToString(secondField));
+    }
+
+    private static void printFieldsOnlyInFirst(Class<?> secondClass, Class<?> firstClass) {
+        for (Field firstField: firstClass.getDeclaredFields()) {
+            if (Arrays
+                    .stream(secondClass.getDeclaredFields())
+                    .noneMatch((Field secondField) -> fieldsEqual(firstField, secondField))) {
+                System.out.println(fieldToString(firstField));
+            }
+        }
     }
 }
