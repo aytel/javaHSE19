@@ -3,7 +3,9 @@ package com.aytel;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.GenericDeclaration;
 import java.lang.reflect.Type;
@@ -15,6 +17,19 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ReflectorTest {
+
+    private static final String lineBreak = System.lineSeparator();
+
+    private static final String noDiff = "Only in first:" + lineBreak +
+            "Methods:" + lineBreak +
+            lineBreak +
+            "Fields:" + lineBreak +
+            lineBreak +
+            "Only in second:" + lineBreak +
+            "Methods:" + lineBreak +
+            lineBreak +
+            "Fields:" + lineBreak +
+            lineBreak;
 
     @Test
     void dumb() throws IOException {
@@ -36,21 +51,17 @@ class ReflectorTest {
             if (field.isSynthetic())
                 continue;
             System.out.println(field.getGenericType().getTypeName() + " " + field.getName());
-            /*for (Type type : types) {
-                System.out.println(type.getTypeName());
-            }*/
         }
-    }
-
-    @Test
-    void dumbDiff() {
-        Reflector.diffClasses(Integer.class, Integer.class);
     }
 
     @Test
     void dumbCompile() throws IOException, ClassNotFoundException {
         Reflector.printStructure(Dumb.class);
-        Reflector.diffClasses(Dumb.class, Class.forName("com.aytel.outputs.Dumb"));
+        var os = new ByteArrayOutputStream();
+        Reflector.diffClassesToCustomOutput(Dumb.class,
+                Class.forName("com.aytel.outputs.Dumb"),
+                new PrintStream(os));
+        assertEquals(noDiff, os.toString());
     }
 
 }

@@ -12,6 +12,9 @@ public class Reflector {
     private static int tabs = 0;
     private static final int tabsOffset = 4;
 
+    /** Prints class to /src/test/java/outputs/PACKAGE.
+     * All its methods will throw {@link UnsupportedOperationException}.
+     */
     public static void printStructure(@NotNull Class<?> someClass) throws IOException {
         writer = new FileWriter("src/test/java/"
                 + someClass.getPackageName().replace('.', '/')
@@ -23,24 +26,29 @@ public class Reflector {
         writer.close();
     }
 
+    /** Prints classes' difference to given printstream.
+     * First methods and fields which are only in first class,
+     * then which are only in second one.
+     */
     static void diffClassesToCustomOutput(Class<?> firstClass, Class<?> secondClass, PrintStream printStream) {
-        printStream.println("Only in first: \n");
-        printStream.println("Methods: \n");
+        printStream.println("Only in first:");
+        printStream.println("Methods:");
         printMethodsOnlyInFirst(firstClass, secondClass);
         printStream.println();
-        printStream.println("Fields: \n");
+        printStream.println("Fields:");
         printFieldsOnlyInFirst(firstClass, secondClass);
         printStream.println();
 
-        printStream.println("Only in second: \n");
-        printStream.println("Methods: \n");
+        printStream.println("Only in second:");
+        printStream.println("Methods:");
         printMethodsOnlyInFirst(secondClass, firstClass);
         printStream.println();
-        printStream.println("Fields: \n");
+        printStream.println("Fields:");
         printFieldsOnlyInFirst(secondClass, firstClass);
         printStream.println();
     }
 
+    /** Prints diffClasses to System.out. */
     public static void diffClasses(@NotNull Class<?> firstClass, @NotNull Class<?> secondClass) {
         diffClassesToCustomOutput(firstClass, secondClass, System.out);
     }
@@ -209,6 +217,9 @@ public class Reflector {
 
     private static void printMethodsOnlyInFirst(Class<?> firstClass, Class<?> secondClass) {
         for (Method firstMethod: firstClass.getDeclaredMethods()) {
+            if (firstMethod.isSynthetic()) {
+                continue;
+            }
             if (Arrays
                     .stream(secondClass.getDeclaredMethods())
                     .noneMatch((Method secondMethod) -> methodsEqual(firstMethod, secondMethod))) {
@@ -223,6 +234,9 @@ public class Reflector {
 
     private static void printFieldsOnlyInFirst(Class<?> secondClass, Class<?> firstClass) {
         for (Field firstField: firstClass.getDeclaredFields()) {
+            if (firstField.isSynthetic()) {
+                continue;
+            }
             if (Arrays
                     .stream(secondClass.getDeclaredFields())
                     .noneMatch((Field secondField) -> fieldsEqual(firstField, secondField))) {
