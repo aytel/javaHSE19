@@ -3,47 +3,6 @@ package com.aytel.HashTable;
 import java.util.AbstractMap.SimpleEntry;
 
 class MyListOfPairsStringString {
-    private class Node {
-        private Node next;
-        private Node prev;
-        private String key;
-        private String val;
-
-        public Node getNext() {
-            return next;
-        }
-
-        public void setNext(Node next) {
-            this.next = next;
-        }
-
-        public Node getPrev() {
-            return prev;
-        }
-
-        public void setPrev(Node prev) {
-            this.prev = prev;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public String getVal() {
-            return val;
-        }
-
-        public void setVal(String val) {
-            this.val = val;
-        }
-
-        Node(String key, String val) {
-            this.key = key;
-            this.val = val;
-            this.next = null;
-            this.prev = null;
-        }
-    }
 
     private Node head = null;
 
@@ -54,11 +13,11 @@ class MyListOfPairsStringString {
             return null;
         }
 
-        if (node.getKey().equals(key)) {
+        if (node.key.equals(key)) {
             return node;
         }
 
-        return find(node.getNext(), key);
+        return find(node.next, key);
     }
 
     protected boolean contains(String key) {
@@ -73,7 +32,7 @@ class MyListOfPairsStringString {
         if (node == null) {
             return null;
         } else {
-            return node.val;
+            return node.value;
         }
     }
 
@@ -83,18 +42,18 @@ class MyListOfPairsStringString {
         if (node == null) {
             Node newHead = new Node(key, val);
 
-            newHead.setNext(head);
+            newHead.next = head;
 
             if (head != null) {
-                head.setPrev(newHead);
+                head.prev = newHead;
             }
             head = newHead;
 
             return null;
         } else {
-            String ret = node.getVal();
-            node.setVal(val);
-            return ret;
+            String returnValue = node.value;
+            node.value = val;
+            return returnValue;
         }
     }
 
@@ -104,18 +63,18 @@ class MyListOfPairsStringString {
         if (node == null) {
             return null;
         } else {
-            String ret = node.getVal();
+            String returnValue = node.value;
 
             if (node == head) {
-                head = node.getNext();
+                head = node.next;
             } else {
-                node.getPrev().setNext(node.getNext());
-                if (node.getNext() != null) {
-                    node.getNext().setPrev(node.prev);
+                node.prev.next = node.next;
+                if (node.next != null) {
+                    node.next.prev = node.prev;
                 }
             }
 
-            return ret;
+            return returnValue;
         }
     }
 
@@ -124,7 +83,21 @@ class MyListOfPairsStringString {
             return null;
         }
         Node oldHead = head;
-        head = head.getNext();
-        return new SimpleEntry<>(oldHead.getKey(), oldHead.getVal());
+        head = head.next;
+        return new SimpleEntry<>(oldHead.key, oldHead.value);
+    }
+
+    private class Node {
+        Node next;
+        Node prev;
+        String key;
+        String value;
+
+        Node(String key, String value) {
+            this.key = key;
+            this.value = value;
+            this.next = null;
+            this.prev = null;
+        }
     }
 }

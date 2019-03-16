@@ -18,17 +18,18 @@ public class MyHashTable {
 
     /**
      * Makes a hashtable with empty lists.
-     * @param LOAD_FACTOR coefficient of rehashing, must be not less than 0
+     * @param loadFactor coefficient of rehashing, must be not less than 0
      * @param capacity number of buckets, must be more than 0
+     * @throws IllegalArgumentException if loadFactor < 0 or capacity <= 0.
      */
-    public MyHashTable(double LOAD_FACTOR, int capacity) throws IllegalArgumentException {
-        if (LOAD_FACTOR < 0) {
-            throw new IllegalArgumentException("LOAD_FACTOR must be not less than 0");
+    public MyHashTable(double loadFactor, int capacity) throws IllegalArgumentException {
+        if (loadFactor < 0) {
+            throw new IllegalArgumentException("loadFactor must be not less than 0");
         }
         if (capacity <= 0) {
             throw new IllegalArgumentException("Capacity must be more than 0");
         }
-        this.LOAD_FACTOR = LOAD_FACTOR;
+        this.LOAD_FACTOR = loadFactor;
         this.initCapacity = capacity;
         this.array = new MyListOfPairsStringString[initCapacity];
         Arrays.setAll(this.array, i -> new MyListOfPairsStringString());
@@ -54,8 +55,8 @@ public class MyHashTable {
         array = newArray;
 
         size = 0;
-        for (var cur : oldArray) {
-            for (Entry<String, String> entry = cur.pop(); entry != null; entry = cur.pop()) {
+        for (var current : oldArray) {
+            for (var entry = current.pop(); entry != null; entry = current.pop()) {
                 put(entry.getKey(), entry.getValue());
             }
         }
@@ -69,6 +70,7 @@ public class MyHashTable {
     /**
      * Checks if hashtable contains the element.
      * @return true in case there is an element with the given key in the hashtable and false otherwise
+     * @throws IllegalArgumentException if element is null.
      */
     public boolean contains(String key) throws IllegalArgumentException {
         return array[hash(key)].contains(key);
@@ -77,6 +79,7 @@ public class MyHashTable {
     /**
      * Gets the value of the given key.
      * @return value in case there is an element with the given key in the hashtable and null otherwise
+     * @throws IllegalArgumentException if key is null.
      */
     public String get(String key) throws IllegalArgumentException {
         return array[hash(key)].get(key);
@@ -85,13 +88,14 @@ public class MyHashTable {
     /**
      * Puts a pair (key, value) to the hashtable.
      * @return previous value in case there was an element with the given key in the hashtable and nul otherwise
+     * @throws IllegalArgumentException if key or value is null.
      */
-    public String put(String key, String val) throws IllegalArgumentException {
-        if (val == null) {
+    public String put(String key, String value) throws IllegalArgumentException {
+        if (value == null) {
             throw new IllegalArgumentException("Value must be not null");
         }
 
-        String foundValue = array[hash(key)].put(key, val);
+        String foundValue = array[hash(key)].put(key, value);
 
         if (foundValue == null) {
             size++;
@@ -106,6 +110,7 @@ public class MyHashTable {
     /**
      * Removes element with the given key from the hashtable if such exists.
      * @return value in case there was an element with the given key in the hashtable and null otherwise
+     * @throws IllegalArgumentException if key is null.
      */
     public String remove(String key) throws IllegalArgumentException {
         String foundValue = array[hash(key)].remove(key);
