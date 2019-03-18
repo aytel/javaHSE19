@@ -98,4 +98,23 @@ class JTreapTest {
         assertEquals("0", jTreapWithCustomComparator.ceiling(""));
 
     }
+
+    @Test
+    void firstAndLast() {
+        treap.add(10);
+        treap.add(2);
+        assertEquals(Integer.valueOf(2), treap.first());
+        assertEquals(Integer.valueOf(10), treap.last());
+        treap.removeAll(Arrays.asList(2, 10));
+        assertThrows(NoSuchElementException.class, () -> treap.last());
+    }
+
+    @Test
+    void bounds() {
+        treap.add(10);
+        treap.add(2);
+        assertNull(treap.higher(11));
+        assertEquals(Integer.valueOf(10), treap.ceiling(5));
+        assertEquals(Integer.valueOf(2), treap.descendingSet().lower(0));
+    }
 }

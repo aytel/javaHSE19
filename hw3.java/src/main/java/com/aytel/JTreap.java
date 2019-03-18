@@ -20,7 +20,7 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
     /** Is this treap descending or not. */
     private boolean inverted;
 
-    private enum IteratorDirection {FORWARD, BACKWARD};
+    private enum IteratorDirection {FORWARD, BACKWARD}
 
     /** Used only to create paired descending treap to treap created by user. */
     private JTreap(@NotNull Comparator<? super T> comparator,
@@ -43,11 +43,12 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
     /** Creates empty treap assuming T is comparable.
      * Otherwise all methods can throw {@link java.lang.ClassCastException}.
      */
+    @SuppressWarnings("unchecked")
     public JTreap() {
-        comparator = (T a, T b) -> ((Comparable<? super T>)a).compareTo(b);
+        comparator = (Comparator<? super T>) Comparator.naturalOrder();
         this.infoStorage = new InfoStorage();
         this.inverted = false;
-        this.descendingTreap = new JTreap<T>(comparator, infoStorage, this);
+        this.descendingTreap = new JTreap<>(comparator, infoStorage, this);
     }
 
     @NotNull
@@ -75,7 +76,7 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
     @Override
     public T first() {
         if (infoStorage.root == null) {
-            return null;
+            throw new NoSuchElementException();
         } else {
             return (!inverted ? infoStorage.root.first().value : infoStorage.root.last().value);
         }
@@ -125,11 +126,12 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean contains(@NotNull Object element) {
         if (infoStorage.root == null) {
             return false;
         } else {
-            return infoStorage.root.contains((T) element);
+            return infoStorage.root.contains((T)element);
         }
     }
 
@@ -142,9 +144,9 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
         NodeTriple nodeTriple = splitToThree(element);
         nodeTriple.equal = new Node(element);
 
-        JListNode.setConnection((nodeTriple.lower != null ? nodeTriple.lower.last().jListNode : null),
+        setConnection((nodeTriple.lower != null ? nodeTriple.lower.last().jListNode : null),
                 nodeTriple.equal.jListNode);
-        JListNode.setConnection(nodeTriple.equal.jListNode,
+        setConnection(nodeTriple.equal.jListNode,
                 (nodeTriple.higher != null ? nodeTriple.higher.first().jListNode : null));
 
         infoStorage.setRoot(nodeTriple.merge());
@@ -152,6 +154,7 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean remove(@NotNull Object element) {
         if (!contains(element)) {
             return false;
@@ -160,7 +163,7 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
         NodeTriple nodeTriple = splitToThree((T)element);
         nodeTriple.equal = null;
 
-        JListNode.setConnection((nodeTriple.lower != null ? nodeTriple.lower.last().jListNode : null),
+        setConnection((nodeTriple.lower != null ? nodeTriple.lower.last().jListNode : null),
                 (nodeTriple.higher != null ? nodeTriple.higher.first().jListNode : null));
 
         infoStorage.setRoot(nodeTriple.merge());
@@ -243,7 +246,7 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
         @NotNull final T value;
         Node left = null, right = null;
         int size = 1;
-        @NotNull final JListNode<Node> jListNode = new JListNode<>(this);
+        @NotNull final JListNode jListNode = new JListNode(this);
 
         Node(@NotNull T value) {
             this.value = value;
@@ -315,7 +318,7 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
                 } else {
                     T returnValue = current.value;
                     previous = current;
-                    JListNode<Node> nextJListNode;
+                    JListNode nextJListNode;
                     if (direction == IteratorDirection.FORWARD) {
                         nextJListNode = current.jListNode.next;
                     } else {
@@ -345,7 +348,7 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
                 }
 
                 if (previous != null) {
-                    JTreap.this.remove(current.value);
+                    JTreap.this.remove(previous.value);
                     previous = null;
                     modificationIndex = infoStorage.lastModification;
                 } else {
@@ -395,21 +398,22 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
         }
     }
 
-    static class JListNode<T> {
-        final T element;
-        JListNode<T> next = null, previous = null;
+    private class JListNode {
+        final Node element;
+        JListNode next = null, previous = null;
 
-        JListNode(@NotNull T element) {
+        JListNode(@NotNull Node element) {
             this.element = element;
         }
 
-        static <T>void setConnection(JListNode<T> first, JListNode<T> second) {
-            if (first != null) {
-                first.next = second;
-            }
-            if (second != null) {
-                second.previous = first;
-            }
+    }
+
+    private void setConnection(JListNode first, JListNode second) {
+        if (first != null) {
+            first.next = second;
+        }
+        if (second != null) {
+            second.previous = first;
         }
     }
 }
