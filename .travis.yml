@@ -2,4 +2,5 @@ language: java
 os: linux
 jdk: oraclejdk11
 services: mongodb
-script: cd ./hw4.java && ./gradlew check
+script: for PROJECT_DIR in */; do (cd "$PROJECT_DIR" && ./gradlew check); done
+
