@@ -6,7 +6,6 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Main {
-
     private static PhoneBook phoneBook;
     private static Scanner inputScanner = new Scanner(System.in);
 
@@ -14,10 +13,10 @@ public class Main {
             "0 - exit\n" +
             "1 - add ownership\n" +
             "2 - find numbers by name\n" +
-            "3 - find names by number\n" +
+            "3 - find names by phoneNumber\n" +
             "4 - delete ownership\n" +
             "5 - change ownership's name\n" +
-            "6 - change ownership's number\n" +
+            "6 - change ownership's phoneNumber\n" +
             "7 - print all ownerships";
 
     private static String read(@NotNull String valueToRead) {
@@ -88,24 +87,24 @@ public class Main {
     }
 
     private static void add() {
-        String name = read("name");
-        String number = read("number");
-        System.out.println(!phoneBook.add(name, number) ? "Ok, added\n" : "Already added to phonebook.");
+        String name = read(Ownership.NAME);
+        String number = read(Ownership.PHONE_NUMBER);
+        System.out.println(phoneBook.add(name, number) ? "Ok, added." : "Already added to phonebook.");
     }
 
     private static void remove() {
-        String name = read("name");
-        String number = read("number");
-        System.out.println(phoneBook.remove(name, number) ? "Ok, removed\n" : "No such ownership in phonebook.");
+        String name = read(Ownership.NAME);
+        String number = read(Ownership.PHONE_NUMBER);
+        System.out.println(phoneBook.remove(name, number) ? "Ok, removed." : "No such ownership in phonebook.");
     }
 
     private static void updateName() {
         String nameBefore = read("old name");
-        String number = read("number");
+        String number = read("phoneNumber");
         String nameAfter = read("new name");
         try {
             System.out.println(phoneBook.updateName(nameBefore, number, nameAfter)
-                    ? "Ok, changed\n" : "Result of change already in phonebook.");
+                    ? "Ok, changed." : "Result of change already in phonebook.");
         } catch (NoSuchElementException e) {
             System.out.println(e.getMessage());
         }
@@ -113,11 +112,11 @@ public class Main {
 
     private static void updateNumber() {
         String name = read("name");
-        String numberBefore = read("old number");
-        String numberAfter = read("new number");
+        String numberBefore = read("old phoneNumber");
+        String numberAfter = read("new phoneNumber");
         try {
             System.out.println(phoneBook.updateNumber(name, numberBefore, numberAfter)
-                    ? "Ok, changed\n" : "Result of change already in phonebook.");
+                    ? "Ok, changed." : "Result of change already in phonebook.");
         } catch (NoSuchElementException e) {
             System.out.println(e.getMessage());
         }
@@ -130,14 +129,14 @@ public class Main {
     }
 
     private static void getByName() {
-        String name = read("name");
+        String name = read(Ownership.NAME);
         for (Ownership ownership : phoneBook.getByName(name)) {
             System.out.println(ownership.toString());
         }
     }
 
     private static void getByNumber() {
-        String number = read("number");
+        String number = read(Ownership.PHONE_NUMBER);
         for (Ownership ownership : phoneBook.getByNumber(number)) {
             System.out.println(ownership.toString());
         }

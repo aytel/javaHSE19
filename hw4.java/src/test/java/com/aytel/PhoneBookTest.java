@@ -12,7 +12,6 @@ import java.util.NoSuchElementException;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PhoneBookTest {
-
     private PhoneBook phoneBook;
 
     @BeforeEach
@@ -20,10 +19,15 @@ class PhoneBookTest {
         phoneBook = new PhoneBook("test");
     }
 
+    @AfterEach
+    void clear() {
+        phoneBook.clear();
+    }
+
     @Test
     void add() {
-        assertFalse(phoneBook.add("a", "10"));
         assertTrue(phoneBook.add("a", "10"));
+        assertFalse(phoneBook.add("a", "10"));
     }
 
     @Test
@@ -34,49 +38,58 @@ class PhoneBookTest {
     }
 
     @Test
-    void update() {
+    void updateName() {
         phoneBook.add("a", "10");
-        assertFalse(phoneBook.updateName("a", "10", "b"));
+        assertTrue(phoneBook.updateName("a", "10", "b"));
         phoneBook.add("a", "10");
-        assertTrue(phoneBook.updateName("b", "10", "a"));
-        List<Ownership> list = phoneBook.getAll();
+        assertFalse(phoneBook.updateName("b", "10", "a"));
         assertEquals(1, phoneBook.getAll().size());
         assertThrows(NoSuchElementException.class, () -> phoneBook.updateName("b", "10", "a"));
     }
 
     @Test
+    void updateNumber() {
+        phoneBook.add("a", "10");
+        assertTrue(phoneBook.updateNumber("a", "10", "20"));
+        phoneBook.add("a", "10");
+        assertFalse(phoneBook.updateNumber("a", "20", "10"));
+        assertEquals(1, phoneBook.getAll().size());
+        assertThrows(NoSuchElementException.class, () -> phoneBook.updateNumber("b", "10", "a"));
+    }
+
+    @Test
     void getAll() {
-        List<Ownership> list = new ArrayList<>();
+        var list = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             phoneBook.add("a", Integer.valueOf(i).toString());
             list.add(new Ownership("a", Integer.valueOf(i).toString()));
         }
-        List<Ownership> listToCheck = phoneBook.getAll();
-        listToCheck.sort(Comparator.comparing((Ownership a) -> a.number));
+        var listToCheck = phoneBook.getAll();
+        listToCheck.sort(Comparator.comparing((Ownership a) -> a.phoneNumber));
         assertEquals(list, listToCheck);
     }
 
     @Test
     void getByName() {
-        List<Ownership> list = new ArrayList<>();
+        var list = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             phoneBook.add("a", Integer.valueOf(i).toString());
             list.add(new Ownership("a", Integer.valueOf(i).toString()));
         }
-        List<Ownership> listToCheck = phoneBook.getByName("a");
-        listToCheck.sort(Comparator.comparing((Ownership a) -> a.number));
+        var listToCheck = phoneBook.getByName("a");
+        listToCheck.sort(Comparator.comparing((Ownership a) -> a.phoneNumber));
         assertEquals(list, listToCheck);
     }
 
     @Test
     void getByNumber() {
-        List<Ownership> list = new ArrayList<>();
+        var list = new ArrayList<>();
         list.add(new Ownership("a", "0"));
         for (int i = 0; i < 10; i++) {
             phoneBook.add("a", Integer.valueOf(i).toString());
         }
-        List<Ownership> listToCheck = phoneBook.getByNumber("0");
-        listToCheck.sort(Comparator.comparing((Ownership a) -> a.number));
+        var listToCheck = phoneBook.getByNumber("0");
+        listToCheck.sort(Comparator.comparing((Ownership a) -> a.phoneNumber));
         assertEquals(list, listToCheck);
     }
 }
