@@ -33,7 +33,7 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
     }
 
     /** Creates empty treap with given comparator. */
-    public JTreap(@NotNull Comparator<T> comparator) {
+    public JTreap(@NotNull Comparator<? super T> comparator) {
         this.comparator = comparator;
         this.infoStorage = new InfoStorage();
         this.inverted = false;
@@ -91,9 +91,13 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
     public T lower(@NotNull T element) {
         NodeTriple nodeTriple = splitToThree(element);
         if (!inverted) {
-            return (nodeTriple.lower != null ? nodeTriple.lower.last().value : null);
+            T returnValue = (nodeTriple.lower != null ? nodeTriple.lower.last().value : null);
+            infoStorage.root = nodeTriple.merge();
+            return returnValue;
         } else {
-            return (nodeTriple.higher != null ? nodeTriple.higher.first().value : null);
+            T returnValue = (nodeTriple.higher != null ? nodeTriple.higher.first().value : null);
+            infoStorage.root = nodeTriple.merge();
+            return returnValue;
         }
     }
 
