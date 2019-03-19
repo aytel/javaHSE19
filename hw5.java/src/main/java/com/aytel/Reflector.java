@@ -32,19 +32,18 @@ public class Reflector {
      */
     static void diffClassesToCustomOutput(Class<?> firstClass, Class<?> secondClass, PrintStream printStream) {
         printStream.println("Only in first:");
-        printStream.println("Methods:");
-        printMethodsOnlyInFirst(firstClass, secondClass);
-        printStream.println();
-        printStream.println("Fields:");
-        printFieldsOnlyInFirst(firstClass, secondClass);
-        printStream.println();
+        printFirstWithoutSecond(firstClass, secondClass, printStream);
 
         printStream.println("Only in second:");
+        printFirstWithoutSecond(secondClass, firstClass, printStream);
+    }
+
+    private static void printFirstWithoutSecond(Class<?> firstClass, Class<?> secondClass, PrintStream printStream) {
         printStream.println("Methods:");
-        printMethodsOnlyInFirst(secondClass, firstClass);
+        printMethodsOnlyInFirst(firstClass, secondClass, printStream);
         printStream.println();
         printStream.println("Fields:");
-        printFieldsOnlyInFirst(secondClass, firstClass);
+        printFieldsOnlyInFirst(firstClass, secondClass, printStream);
         printStream.println();
     }
 
@@ -167,13 +166,9 @@ public class Reflector {
         }
     }
 
-    private static String methodToString(Method method) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(modifiersToString(method.getModifiers()));
-        stringBuilder.append(genericTypeToString(method.getTypeParameters()));
-        stringBuilder.append(method.getGenericReturnType().getTypeName()).append(" ").append(method.getName()).append(" ");
-        stringBuilder.append("(").append(Arrays
-                .stream(method.getParameters())
+    private static String executableParametersToString(Executable executable) {
+        return Arrays
+                .stream(executable.getParameters())
                 .map((Parameter parameter) -> {
                     if (parameter.isVarArgs()) {
                         String typeName = parameter.getParameterizedType().getTypeName();
@@ -183,7 +178,15 @@ public class Reflector {
                         return parameter.getParameterizedType().getTypeName() + " " + parameter.getName();
                     }
                 })
-                .collect(Collectors.joining(", "))).append(")");
+                .collect(Collectors.joining(", "));
+    }
+
+    private static String methodToString(Method method) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(modifiersToString(method.getModifiers()));
+        stringBuilder.append(genericTypeToString(method.getTypeParameters()));
+        stringBuilder.append(method.getGenericReturnType().getTypeName()).append(" ").append(method.getName()).append(" ");
+        stringBuilder.append("(").append(executableParametersToString(method)).append(")");
         return stringBuilder.toString();
     }
 
@@ -192,18 +195,7 @@ public class Reflector {
         stringBuilder.append(modifiersToString(constructor.getModifiers()));
         stringBuilder.append(genericTypeToString(constructor.getTypeParameters()));
         stringBuilder.append(someClass.getSimpleName());
-        stringBuilder.append("(").append(Arrays
-                .stream(constructor.getParameters())
-                .map((Parameter parameter) -> {
-                    if (parameter.isVarArgs()) {
-                        String typeName = parameter.getParameterizedType().getTypeName();
-                        typeName = typeName.substring(0, typeName.length() - 2) + "...";
-                        return typeName + " " + parameter.getName();
-                    } else {
-                        return parameter.getParameterizedType().getTypeName() + " " + parameter.getName();
-                    }
-                })
-                .collect(Collectors.joining(", "))).append("){}\n");
+        stringBuilder.append("(").append(executableParametersToString(constructor)).append("){}\n");
         return stringBuilder.toString();
     }
 
@@ -215,7 +207,7 @@ public class Reflector {
         return methodToString(firstMethod).equals(methodToString(secondMethod));
     }
 
-    private static void printMethodsOnlyInFirst(Class<?> firstClass, Class<?> secondClass) {
+    private static void printMethodsOnlyInFirst(Class<?> firstClass, Class<?> secondClass, PrintStream printStream) {
         for (Method firstMethod: firstClass.getDeclaredMethods()) {
             if (firstMethod.isSynthetic()) {
                 continue;
@@ -223,7 +215,7 @@ public class Reflector {
             if (Arrays
                     .stream(secondClass.getDeclaredMethods())
                     .noneMatch((Method secondMethod) -> methodsEqual(firstMethod, secondMethod))) {
-                System.out.println(methodToString(firstMethod));
+                printStream.println(methodToString(firstMethod));
             }
         }
     }
@@ -232,7 +224,7 @@ public class Reflector {
         return fieldToString(firstField).equals(fieldToString(secondField));
     }
 
-    private static void printFieldsOnlyInFirst(Class<?> secondClass, Class<?> firstClass) {
+    private static void printFieldsOnlyInFirst(Class<?> secondClass, Class<?> firstClass, PrintStream printStream) {
         for (Field firstField: firstClass.getDeclaredFields()) {
             if (firstField.isSynthetic()) {
                 continue;
@@ -240,7 +232,7 @@ public class Reflector {
             if (Arrays
                     .stream(secondClass.getDeclaredFields())
                     .noneMatch((Field secondField) -> fieldsEqual(firstField, secondField))) {
-                System.out.println(fieldToString(firstField));
+                printStream.println(fieldToString(firstField));
             }
         }
     }

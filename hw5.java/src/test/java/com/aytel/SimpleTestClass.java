@@ -1,5 +1,5 @@
 package com.aytel;
 
-public class DDumb<T>{
+public class SimpleTestClass<T>{
     int k;
 }

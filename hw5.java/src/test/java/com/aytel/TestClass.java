@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class Dumb<T extends Integer, K, G extends String & List> extends DDumb<Integer> implements Comparable<K>, DumbI<List<? super K>> {
+public class TestClass<T extends Integer, K, G extends String & List> extends SimpleTestClass<Integer> implements Comparable<K>, FirstTestInterface<List<? super K>> {
     List<T> list;
     List<Integer> ilist;
     T t;
@@ -28,8 +28,8 @@ public class Dumb<T extends Integer, K, G extends String & List> extends DDumb<I
         int a;
         List<T> b;
     }
-    private <T, K>Dumb(int i){}
-    <Q>Dumb(T x, Integer y){}
+    private <T, K> TestClass(int i){}
+    <Q> TestClass(T x, Integer y){}
 
     private void superOf(T ... oh) {
         return;
