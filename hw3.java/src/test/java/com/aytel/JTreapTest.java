@@ -95,7 +95,7 @@ class JTreapTest {
         jTreapWithCustomComparator.add("0");
         jTreapWithCustomComparator.add("1");
         assertEquals(1, jTreapWithCustomComparator.size());
-        assertEquals("0", jTreapWithCustomComparator.ceiling(""));
+        assertEquals("1", jTreapWithCustomComparator.ceiling(""));
 
     }
 

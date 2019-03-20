@@ -4,10 +4,10 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
-    private @NotNull Comparator<? super T> comparator;
-
     /** Keeps root, index of last modification and random. Common for this and descendingTreap. */
     private @NotNull InfoStorage infoStorage;
 
@@ -23,10 +23,8 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
     private enum IteratorDirection {FORWARD, BACKWARD}
 
     /** Used only to create paired descending treap to treap created by user. */
-    private JTreap(@NotNull Comparator<? super T> comparator,
-                   @NotNull InfoStorage infoStorage,
+    private JTreap(@NotNull InfoStorage infoStorage,
                    @NotNull JTreap<T> descendingTreap) {
-        this.comparator = comparator;
         this.infoStorage = infoStorage;
         this.descendingTreap = descendingTreap;
         this.inverted = true;
@@ -34,10 +32,11 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
 
     /** Creates empty treap with given comparator. */
     public JTreap(@NotNull Comparator<? super T> comparator) {
-        this.comparator = comparator;
         this.infoStorage = new InfoStorage();
+        this.infoStorage.comparator = comparator;
+        this.infoStorage.isComparatorSynthetic = false;
         this.inverted = false;
-        this.descendingTreap = new JTreap<>(comparator, infoStorage, this);
+        this.descendingTreap = new JTreap<>(infoStorage, this);
     }
 
     /** Creates empty treap assuming T is comparable.
@@ -45,10 +44,11 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
      */
     @SuppressWarnings("unchecked")
     public JTreap() {
-        comparator = (Comparator<? super T>) Comparator.naturalOrder();
         this.infoStorage = new InfoStorage();
+        this.infoStorage.comparator = (Comparator<? super T>) Comparator.naturalOrder();
+        this.infoStorage.isComparatorSynthetic = true;
         this.inverted = false;
-        this.descendingTreap = new JTreap<>(comparator, infoStorage, this);
+        this.descendingTreap = new JTreap<>(infoStorage, this);
     }
 
     @NotNull
@@ -129,14 +129,22 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
         }
     }
 
-    @Override
     @SuppressWarnings("unchecked")
-    public boolean contains(@NotNull Object element) {
+    private Node find(@NotNull Object element) {
         if (infoStorage.root == null) {
-            return false;
+            return null;
         } else {
-            return infoStorage.root.contains((T)element);
+            if (infoStorage.isComparatorSynthetic) {
+                return infoStorage.root.find((T value) -> infoStorage.comparator.compare((T)element, value));
+            } else {
+                return infoStorage.root.find(((Comparable<? super T>) element)::compareTo);
+            }
         }
+    }
+
+    @Override
+    public boolean contains(@NotNull Object element) {
+        return find(element) != null;
     }
 
     @Override
@@ -157,14 +165,12 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
         return true;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public boolean remove(@NotNull Object element) {
+    private boolean removeSure(@NotNull T element) {
         if (!contains(element)) {
             return false;
         }
 
-        NodeTriple nodeTriple = splitToThree((T)element);
+        NodeTriple nodeTriple = splitToThree(element);
         nodeTriple.equal = null;
 
         setConnection((nodeTriple.lower != null ? nodeTriple.lower.last().jListNode : null),
@@ -174,11 +180,21 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
         return true;
     }
 
+    @Override
+    public boolean remove(@NotNull Object element) {
+        Node found = find(element);
+        if (found == null) {
+            return false;
+        } else {
+            return removeSure(found.value);
+        }
+    }
+
     private NodePair split(Node node, @NotNull T value) {
         if (node == null) {
             return new NodePair(null, null);
         }
-        if (comparator.compare(node.value, value) >= 0) {
+        if (infoStorage.comparator.compare(node.value, value) >= 0) {
             NodePair nodePair = split(node.left, value);
             node.setLeft(nodePair.equalOrHigher);
             nodePair.equalOrHigher = node;
@@ -221,7 +237,7 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
         if (nodePair.equalOrHigher == null) {
             return new NodeTriple(nodePair.lower, null, null);
         } else {
-            if (comparator.compare(nodePair.equalOrHigher.first().value, element) == 0) {
+            if (infoStorage.comparator.compare(nodePair.equalOrHigher.first().value, element) == 0) {
                 if (nodePair.equalOrHigher.first().jListNode.next == null) {
                     return new NodeTriple(nodePair.lower, nodePair.equalOrHigher, null);
                 } else {
@@ -239,6 +255,8 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
         int lastModification = 0;
         Node root = null;
         Random random = new Random();
+        Comparator<? super T> comparator;
+        boolean isComparatorSynthetic;
 
         void setRoot(Node value) {
             root = value;
@@ -270,14 +288,14 @@ public class JTreap<T> extends AbstractSet<T> implements JMyTreeSet<T>  {
             this.size = 1 + (left != null ? left.size : 0) + (right != null ? right.size : 0);
         }
 
-        boolean contains(@NotNull T element) {
-            if (comparator.compare(value, element) == 0) {
-                return true;
+        Node find(@NotNull Function<T, Integer> compareToElement) {
+            if (compareToElement.apply(value) == 0) {
+                return this;
             }
-            if (comparator.compare(value, element) < 0) {
-                return (right != null && right.contains(element));
+            if (compareToElement.apply(value) > 0) {
+                return (right == null ? null : right.find(compareToElement));
             }
-            return (left != null && left.contains(element));
+            return (left == null ? null : left.find(compareToElement));
         }
 
         @NotNull
