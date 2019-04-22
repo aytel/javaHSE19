@@ -3,4 +3,3 @@ os: linux
 jdk: oraclejdk11
 services: mongodb
 script: for PROJECT_DIR in */; do (cd "$PROJECT_DIR" && ./gradlew check); done
-
