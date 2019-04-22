@@ -1,9 +1,10 @@
 plugins {
     id 'java'
+    id 'idea'
 }
 
 group 'aytel'
-version '1.1.0'
+version '1.6.0'
 
 sourceCompatibility = 11
 
@@ -12,8 +13,11 @@ repositories {
 }
 
 dependencies {
-    testCompile("org.junit.jupiter:junit-jupiter-api:5.3.2")
+    testCompile('org.junit.jupiter:junit-jupiter-api:5.3.2')
     testRuntime('org.junit.jupiter:junit-jupiter-engine:5.3.2')
+    compile 'org.jetbrains:annotations:17.0.0'
+    compile group: 'com.google.guava', name: 'guava', version: '11.0.2'
+
 }
 
 test {

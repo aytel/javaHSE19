@@ -2,4 +2,3 @@ language: java
 os: linux
 jdk: oraclejdk11
 script: for PROJECT_DIR in */; do (cd "$PROJECT_DIR" && ./gradlew check); done
-
