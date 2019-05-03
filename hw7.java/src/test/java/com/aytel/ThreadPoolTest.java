@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
+import static java.lang.Math.abs;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ThreadPoolTest {
@@ -62,10 +63,13 @@ public class ThreadPoolTest {
     void testHowManyThreads() {
         int startCount = Thread.activeCount();
         var random = new Random();
+        int x = random.nextInt(2);
+        System.out.println(x);
         for (int i = 0; i < 100; i++) {
-            int howManyNow = random.nextInt() % 200;
+            int howManyNow = abs(random.nextInt()) % 200;
             var threadPool = new ThreadPool(howManyNow);
             assertEquals(startCount + howManyNow, Thread.activeCount());
         }
+
     }
 }

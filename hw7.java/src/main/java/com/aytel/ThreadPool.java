@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+/** Threadpool with fixed number of threads. Can get tasks and calculate them in parallel. */
 public class ThreadPool {
     private boolean isShutdown = false;
     private final Thread[] threads;
@@ -27,6 +28,7 @@ public class ThreadPool {
         }
     };
 
+    /** Creates threadpool with number of threads given in the constructor. */
     public ThreadPool(int threadsNumber) {
         checkArgument(threadsNumber > 0);
         threads = new Thread[threadsNumber];
@@ -34,6 +36,7 @@ public class ThreadPool {
         Arrays.stream(threads).forEach(Thread::start);
     }
 
+    /** Submits task to threadpool and returns LightFuture to get the result. */
     public <T> LightFuture<T> add(@NotNull Supplier<T> supplier) {
         if (this.isShutdown) {
             throw new IllegalStateException("Threadpool is shutdown already.");
@@ -47,6 +50,7 @@ public class ThreadPool {
         return task;
     }
 
+    /** Stops threadpool. After this threadpool can't accept tasks no more. */
     public synchronized void shutdown() {
         this.isShutdown = true;
         Arrays.stream(this.threads).forEach(Thread::interrupt);
