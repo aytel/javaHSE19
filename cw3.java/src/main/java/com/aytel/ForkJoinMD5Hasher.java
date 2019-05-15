@@ -8,7 +8,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 
@@ -17,7 +16,7 @@ public class ForkJoinMD5Hasher implements MD5Hasher {
     private ForkJoinPool exec = new ForkJoinPool();
 
     @Override
-    public MessageDigest hash(@NotNull File file) throws IOException {
+    public MessageDigest hash(@NotNull File file) {
         return exec.invoke(new FileHasher(file));
     }
 
