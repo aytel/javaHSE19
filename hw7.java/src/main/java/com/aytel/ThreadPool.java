@@ -51,9 +51,12 @@ public class ThreadPool {
     }
 
     /** Stops threadpool. After this threadpool can't accept tasks no more. */
-    public synchronized void shutdown() {
+    public synchronized void shutdown() throws InterruptedException {
         this.isShutdown = true;
         Arrays.stream(this.threads).forEach(Thread::interrupt);
+        for (Thread thread : this.threads) {
+            thread.join();
+        }
     }
 
     private class Task<T> implements LightFuture<T>, Runnable {
@@ -100,7 +103,7 @@ public class ThreadPool {
         }
 
         @Override
-        public synchronized <K> LightFuture<K> thenApply(@NotNull Function<? super T, K> function) {
+        public <K> LightFuture<K> thenApply(@NotNull Function<? super T, K> function) {
             var task = new Task<>(this, function);
             if (this.ready) {
                 synchronized (tasks) {

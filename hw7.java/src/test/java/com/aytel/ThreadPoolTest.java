@@ -44,7 +44,7 @@ public class ThreadPoolTest {
     }
 
     @Test
-    void testShutdown() {
+    void testShutdown()  {
         var threadPool = new ThreadPool(1);
         LightFuture<Integer> lightFuture = threadPool.add(() -> {
             var random = new Random();
@@ -55,7 +55,7 @@ public class ThreadPoolTest {
             }
             return current;
         });
-        threadPool.shutdown();
+        assertDoesNotThrow(threadPool::shutdown);
         assertThrows(IllegalStateException.class, () -> threadPool.add(() -> 0));
     }
 
@@ -66,6 +66,22 @@ public class ThreadPoolTest {
         int howManyNow = abs(random.nextInt()) % 200;
         var threadPool = new ThreadPool(howManyNow);
         assertEquals(startCount + howManyNow, Thread.activeCount());
+    }
 
+    @Test
+    void testThenApply() {
+        var threadPool = new ThreadPool(100);
+        List<LightFuture<Integer>> lightFutures = new ArrayList<>();
+        IntStream.range(0, 100).forEach((i) -> lightFutures.add(threadPool.add(simpleSupplier)));
+        List<LightFuture<Integer>> results = new ArrayList<>();
+        lightFutures.forEach((lightFuture) -> results.add(lightFuture.thenApply((x) -> x ^ 100)));
+        int[] index = new int[1];
+        for (index[0] = 0; index[0] < 100; index[0]++) {
+            assertDoesNotThrow(() -> {
+                int expected = lightFutures.get(index[0]).get() ^ 100;
+                int actual = results.get(index[0]).get();
+                assertEquals(expected, actual);
+            });
+        }
     }
 }

@@ -7,7 +7,11 @@ public interface LightFuture<T> {
     /** Returns true if task is ready and false otherwise. */
     boolean isReady();
 
-    /** Waits for calculating and returns the result. */
+    /**
+     Waits for calculating and returns the result.
+     @throws InterruptedException if thread was interrupted during running.
+     @throws LightExecutionException in anything else went wrong.
+     */
     T get() throws LightExecutionException, InterruptedException;
 
     /** Returns new LightFuture which will return function applied to result of this LightFuture. */
