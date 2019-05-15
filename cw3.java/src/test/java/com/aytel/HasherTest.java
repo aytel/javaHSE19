@@ -1,18 +1,16 @@
 package com.aytel;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class HasherTest {
-    MD5Hasher singleThreadHasher = new SingleThreadMD5Hasher();
-    MD5Hasher forkJoinHasher = new ForkJoinMD5Hasher();
+    private MD5Hasher singleThreadHasher = new SingleThreadMD5Hasher();
+    private MD5Hasher forkJoinHasher = new ForkJoinMD5Hasher();
 
     void testEmptyFolder(MD5Hasher hasher) {
         try {
