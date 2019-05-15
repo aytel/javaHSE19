@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+    id 'idea'
+}
+
+group 'aytel'
+version '1.8.0'
+
+sourceCompatibility = 11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile('org.junit.jupiter:junit-jupiter-api:5.3.2')
+    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.3.2')
+    compile 'org.jetbrains:annotations:17.0.0'
+    compile group: 'com.google.guava', name: 'guava', version: '11.0.2'
+
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// Declares binary plugin and its required JavaFX classpath
+apply from: "http://dl.bintray.com/content/shemnon/javafx-gradle/8.1.1/javafx.plugin"
+
+// Configures plugin
+javafx {
+    // Points to JDK and its JavaFX libraries, also declares target runtime JDK
+    javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk'
+
+    // Application name and ID presented by target OS
+    appID 'HelloWorldApp'
+    appName 'Hello World Application'
+
+    // Main class of application
+    mainClass 'helloworld.HelloWorld'
+
+    // JVM arguments, system properties, application command line arguments
+    jvmArgs = ['-XX:+AggressiveOpts', '-XX:CompileThreshold=1']
+    systemProperties = ['prism.disableRegionCaching':'true']
+    arguments = ['-l', '--fast']
+
+    // Keystore credentials for signing JAR
+    // Generate key: keytool -genkey -alias release -keyalg RSA -keystore keystore.jks -keysize 2048
+    releaseKey {
+        alias = 'release'
+        keyPass = getProjectProperty('keyStorePassword')
+        keyStore = file("${System.properties['user.home']}/keystore/keystore.jks")
+        storePass = getProjectProperty('storePassword')
+    }
+
+    signingMode 'release'
+
+    // ...
+}
+
+String getProjectProperty(String propertyName) {
+    project.hasProperty(propertyName) ? project.property(propertyName) : null
+}
