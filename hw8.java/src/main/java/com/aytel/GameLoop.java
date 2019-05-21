@@ -9,10 +9,12 @@ public class GameLoop extends AnimationTimer {
     private final Land land;
     private final Aims aims;
     private final Cannon cannon;
+    private final Main main;
 
     private long time = System.nanoTime();
 
-    GameLoop(GraphicsContext landGC, GraphicsContext aimsGC, GraphicsContext cannonGC) {
+    GameLoop(Main main, GraphicsContext landGC, GraphicsContext aimsGC, GraphicsContext cannonGC) {
+        this.main = main;
         this.landGC = landGC;
         this.aimsGC = aimsGC;
         this.cannonGC = cannonGC;
@@ -43,6 +45,7 @@ public class GameLoop extends AnimationTimer {
         time = now;
 
         if (aims.finished()) {
+            main.finish();
             stop();
         }
     }
@@ -63,6 +66,15 @@ public class GameLoop extends AnimationTimer {
                 break;
             case DOWN:
                 cannon.downTrunk();
+                break;
+            case DIGIT1:
+                cannon.bulletMode = Bullet.Mode.SMALL;
+                break;
+            case DIGIT2:
+                cannon.bulletMode = Bullet.Mode.DEFAULT;
+                break;
+            case DIGIT3:
+                cannon.bulletMode = Bullet.Mode.LARGE;
                 break;
         }
     }

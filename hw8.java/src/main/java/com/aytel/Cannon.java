@@ -15,9 +15,9 @@ public class Cannon implements Sprite {
     private final int TRUNK_GAUGE = 10;
 
     private final Land land;
-    private final IntrusiveList<Bullet> bullets = new IntrusiveList<Bullet>();
+    private final IntrusiveList<Bullet> bullets = new IntrusiveList<>();
 
-    private Bullet.Mode bulletMode = Bullet.Mode.DEFAULT;
+    Bullet.Mode bulletMode = Bullet.Mode.DEFAULT;
 
     private double speedX = 0.0, speedTrunk = 0.0;
 

@@ -19,16 +19,16 @@ public class Bullet extends IntrusiveList.IntrusiveContainer<Bullet> implements 
     Bullet(double x, double y, double angle, Mode mode) {
         switch (mode) {
             case SMALL:
-                RADIUS = 1;
-                START_SPEED = 10e-7;
+                RADIUS = 3;
+                START_SPEED = 6e-7;
                 break;
             case LARGE:
-                RADIUS = 5;
-                START_SPEED = 2e-7;
+                RADIUS = 7;
+                START_SPEED = 3.5e-7;
                 break;
             default:
-                RADIUS = 3;
-                START_SPEED = 5e-7;
+                RADIUS = 5;
+                START_SPEED = 4.2e-7;
                 break;
         }
 
