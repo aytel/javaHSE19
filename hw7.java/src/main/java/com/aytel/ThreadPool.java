@@ -64,7 +64,7 @@ public class ThreadPool {
         private LightExecutionException exception = null;
         private boolean ready = false;
         private final Supplier<T> supplier;
-        private final List<Task> waiting = new ArrayList<>();
+        private final List<Task<?>> waiting = new ArrayList<>();
 
         Task(Supplier<T> supplier) {
             this.supplier = supplier;
