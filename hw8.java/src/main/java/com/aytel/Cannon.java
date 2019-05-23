@@ -8,6 +8,7 @@ import java.util.List;
 
 import static java.lang.Math.*;
 
+/** Cannon player should control. */
 public class Cannon implements Sprite {
     private final int BASE_HEIGHT = 30;
     private final int BASE_WIDTH = 30;
@@ -21,6 +22,7 @@ public class Cannon implements Sprite {
 
     private double speedX = 0.0, speedTrunk = 0.0;
 
+    /** Creates cannon and places it on the land. */
     Cannon(Land land) {
         this.land = land;
         x = land.width / 50.0;
@@ -29,6 +31,7 @@ public class Cannon implements Sprite {
     private double x;
     private double angle = 0.0;
 
+    /** Cannon is a base, which is square, and a trunk, which is line. */
     @Override
     public void draw(GraphicsContext gc) {
         double x = this.x, y = land.getY(x);
@@ -52,6 +55,7 @@ public class Cannon implements Sprite {
         gc.fillRect(x - (BASE_WIDTH >> 1), y - (BASE_HEIGHT >> 1), BASE_WIDTH, BASE_HEIGHT);
     }
 
+    /** Cannon has speed of base and speed of trunk turning which depend on the pressed keys. */
     @Override
     public void update(long delta) {
         x += speedX * delta;
@@ -59,10 +63,12 @@ public class Cannon implements Sprite {
         bullets.forEach(bullet -> bullet.update(delta));
     }
 
+    /** Creates new bullet at the end of the trunk. */
     void fire() {
         bullets.add(new Bullet(x + TRUNK_LENGTH * cos(angle), land.getY(x) + TRUNK_LENGTH * sin(angle), angle, bulletMode));
     }
 
+    /** Checks which aims must be destroyed due to bullets near them. */
     void checkBulletsWithAims(IntrusiveList<Aim> aims) {
         bullets.forEach(bullet -> aims.forEach(aim -> {
             double dx = abs(bullet.x - aim.x), dy = abs(bullet.y - aim.y);
@@ -72,6 +78,7 @@ public class Cannon implements Sprite {
         }));
     }
 
+    /** Checks which bullets must be destroyed due to touching the land. */
     void checkBulletsWithLand() {
         List<Bullet> toDelete = new LinkedList<>();
 

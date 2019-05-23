@@ -2,10 +2,9 @@ package com.aytel;
 
 import javafx.scene.canvas.GraphicsContext;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.IntStream;
 
+/** Container for aims. */
 public class Aims implements Sprite {
     private final int DEFAULT_COUNT = 3;
 
@@ -13,6 +12,7 @@ public class Aims implements Sprite {
 
     final IntrusiveList<Aim> aims = new IntrusiveList<>();
 
+    /** Creates aims in random places according to chosen mode. */
     Aims(Land land, Mode mode) {
         this.land = land;
 
@@ -32,9 +32,11 @@ public class Aims implements Sprite {
         aims.forEach((aim) -> aim.draw(gc));
     }
 
+    /** Returns true if there's no aims left and false otherwise. */
     boolean finished() {
         return !aims.iterator().hasNext();
     }
 
+    /** Mode of creating aims. ONE - creates one aim, DEFAULT - three aims. */
     enum Mode { ONE, DEFAULT }
 }

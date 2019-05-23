@@ -4,6 +4,7 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 
+/** Main gameloop. Works until all aims are detroyed. */
 public class GameLoop extends AnimationTimer {
     private final GraphicsContext landGC, aimsGC, cannonGC;
     private final Land land;
@@ -13,6 +14,7 @@ public class GameLoop extends AnimationTimer {
 
     private long time = System.nanoTime();
 
+    /** Creates all game objects. */
     GameLoop(Main main, GraphicsContext landGC, GraphicsContext aimsGC, GraphicsContext cannonGC) {
         this.main = main;
         this.landGC = landGC;
@@ -24,6 +26,7 @@ public class GameLoop extends AnimationTimer {
         aims = new Aims(land, Aims.Mode.DEFAULT);
     }
 
+    /** Draws all still existing game objects and finishes game if there's no aims left. */
     @Override
     public void handle(long now) {
         landGC.clearRect(0, 0, landGC.getCanvas().getWidth(), landGC.getCanvas().getHeight());

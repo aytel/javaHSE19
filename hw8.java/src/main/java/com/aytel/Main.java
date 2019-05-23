@@ -1,30 +1,22 @@
 package com.aytel;
 
-import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.util.concurrent.TimeUnit;
-
 public class Main extends Application {
-    static final int FRAMES_GAP = 30;
-
     private static final int HEIGHT = 720;
     private static final int WIDTH = 1280;
-    private static final Timeline timeline = new Timeline();
 
     private Stage primaryStage;
 
+    /** Creates all canvases and starts gameloop. */
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -67,6 +59,7 @@ public class Main extends Application {
         gameLoop.start();
     }
 
+    /** Shows final screen with congrats. */
     void finish() {
         var finalPane = new Pane();
         finalPane.setStyle("-fx-background-color: #75bbfd;");

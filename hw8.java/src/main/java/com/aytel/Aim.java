@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 
 import java.util.Random;
 
+/** Aim which player show fire to. */
 public class Aim extends IntrusiveList.IntrusiveContainer<Aim> implements Sprite {
     final double RADIUS = 20;
     final double x, y;
@@ -15,6 +16,7 @@ public class Aim extends IntrusiveList.IntrusiveContainer<Aim> implements Sprite
         y = land.getY(x);
     }
 
+    /** Aim is a red circle. */
     @Override
     public void draw(GraphicsContext gc) {
         gc.setFill(Color.RED);

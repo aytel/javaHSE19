@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
+/** Double-linked intrusive list created to keep sequence of objects, iterate over them and erase them. */
 class IntrusiveList<T extends IntrusiveList.IntrusiveContainer> implements Iterable<T> {
     private IntrusiveNode<T> root = null;
 
