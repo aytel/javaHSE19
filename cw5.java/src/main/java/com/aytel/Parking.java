@@ -21,14 +21,14 @@ public class Parking {
     /** Tries to park a car. Returns true if succeeded and false otherwise. */
     public boolean enter() {
         return updater.getAndUpdate(this, enterUpdate) > 0;
-    }
+    }\
 
     /** Tries to unpark a car. Returns true if succeeded and false otherwise. */
     public boolean leave() {
         return updater.getAndUpdate(this, leaveUpdate) < capacity;
     }
 
-    /** Returns number of free parking places. */
+    /** Returns number of free parking  places. */
     int free() {
         return free;
     }
