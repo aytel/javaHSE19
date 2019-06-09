@@ -65,8 +65,8 @@ public class Main extends Application {
         finalPane.setStyle("-fx-background-color: #75bbfd;");
 
         var finalText = new Text();
-        finalText.setY(HEIGHT >> 1);
-        finalText.setX((WIDTH >> 1) - 120);
+        finalText.setY(HEIGHT / 2);
+        finalText.setX((WIDTH / 2) - 120);
         finalText.setText("Congratulations!");
         finalText.setFill(Color.GREEN);
         finalText.setFont(new Font(40));

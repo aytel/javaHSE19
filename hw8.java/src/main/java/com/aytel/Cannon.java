@@ -52,7 +52,7 @@ public class Cannon implements Sprite {
 
     private void drawBase(GraphicsContext gc, double x, double y) {
         gc.setFill(Color.FORESTGREEN);
-        gc.fillRect(x - (BASE_WIDTH >> 1), y - (BASE_HEIGHT >> 1), BASE_WIDTH, BASE_HEIGHT);
+        gc.fillRect(x - (BASE_WIDTH / 2), y - (BASE_HEIGHT / 2), BASE_WIDTH, BASE_HEIGHT);
     }
 
     /** Cannon has speed of base and speed of trunk turning which depend on the pressed keys. */
