@@ -12,11 +12,11 @@ public class Tester {
         try {
             var clazz = Class.forName(name);
 
-            List<Method> beforeClass = new LinkedList<>(),
-                    afterClass = new LinkedList<>(),
-                    beforeEach = new LinkedList<>(),
-                    afterEach = new LinkedList<>(),
-                    tests = new LinkedList<>();
+            var beforeClass = new LinkedList<Method>();
+            var afterClass = new LinkedList<Method>();
+            var beforeEach = new LinkedList<Method>();
+            var afterEach = new LinkedList<Method>();
+            var tests = new LinkedList<Method>();
 
             for (var method: clazz.getDeclaredMethods()) {
                 if (method.isAnnotationPresent(Test.class)) {
@@ -40,7 +40,7 @@ public class Tester {
 
             for (var method: tests) {
                 var test = method.getAnnotation(Test.class);
-                if (!test.ignore().equals("")) {
+                if (!test.ignore().isEmpty()) {
                     System.out.printf("Method %s is not tested, reason is: %s\n", method.getName(), test.ignore());
                 } else {
                     testMethod(method, beforeEach, afterEach);
@@ -91,5 +91,9 @@ public class Tester {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void main(String[] args) {
+        test(args[0]);
     }
 }

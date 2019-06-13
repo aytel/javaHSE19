@@ -1,12 +1,15 @@
 plugins {
     id 'java'
     id 'idea'
+    id 'application'
 }
 
 group 'aytel'
 version '1.9.0'
 
 sourceCompatibility = 11
+
+mainClassName = "com.aytel.Tester"
 
 repositories {
     mavenCentral()
